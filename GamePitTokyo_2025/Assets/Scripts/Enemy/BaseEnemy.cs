@@ -42,6 +42,10 @@ public class BaseEnemy : MonoBehaviour
 	[Tooltip("障害物レイヤー名.")]
 	protected LayerMask obstacleLayer;
 
+	[SerializeField]
+	[Tooltip("プレイヤーが属するレイヤー.")]
+	private LayerMask playerLayer;
+
 	[Header("移動設定")]
 	[SerializeField]
 	[Tooltip("通常時の移動速度.")]
@@ -81,7 +85,7 @@ public class BaseEnemy : MonoBehaviour
 
 	#endregion
 
-	#region 変数.
+	#region 保護された変数.
 
 	protected float currentHP;
 	protected Transform playerTransform;
@@ -92,7 +96,7 @@ public class BaseEnemy : MonoBehaviour
 
 	#endregion
 
-	#region Unityイベント.
+	#region Unityライフサイクル.
 
 	/// <summary>
 	/// 初期化処理.
@@ -140,6 +144,12 @@ public class BaseEnemy : MonoBehaviour
 	/// </summary>
 	protected virtual void DetectPlayer()
 	{
+		// 既に検出されていたら検出処理をスキップ.
+		if (isPlayerDetected)
+		{
+			return;
+		}
+
 		if (playerTransform == null)
 		{
 			isPlayerDetected = false;
@@ -155,6 +165,8 @@ public class BaseEnemy : MonoBehaviour
 			return;
 		}
 
+		Debug.Log($"📊 検出範囲内: 距離 = {distanceToPlayer}");
+
 		// プレイヤーの方向を計算.
 		Vector2 directionToPlayer = (playerTransform.position - transform.position).normalized;
 		float angleToPlayer = Mathf.Atan2(directionToPlayer.y, directionToPlayer.x) * Mathf.Rad2Deg;
@@ -165,8 +177,11 @@ public class BaseEnemy : MonoBehaviour
 		// 視野角内かチェック.
 		float angleDifference = Mathf.Abs(Mathf.DeltaAngle(enemyFacingAngle, angleToPlayer));
 
+		Debug.Log($"👁️ 角度差: {angleDifference}度, 視野角: {fieldOfViewAngle}度");
+
 		if (angleDifference > fieldOfViewAngle * 0.5f)
 		{
+			Debug.Log($"⚠️ 視野角外です");
 			isPlayerDetected = false;
 			return;
 		}
@@ -183,6 +198,8 @@ public class BaseEnemy : MonoBehaviour
 	{
 		Vector2 directionToPlayer = (playerTransform.position - transform.position).normalized;
 		float distanceToPlayer = Vector2.Distance(transform.position, playerTransform.position);
+
+		Debug.Log($"📍 Raycast開始: プレイヤーまでの距離 = {distanceToPlayer}");
 
 		// 複数本のRayを放つ.
 		for (int i = 0; i < raycastCount; i++)
@@ -203,17 +220,27 @@ public class BaseEnemy : MonoBehaviour
 				transform.position,
 				rayDirection,
 				detectionRange,
-				~obstacleLayer
+				playerLayer
 			);
 
 			// Raycast結果の可視化（Debug用）.
 			Debug.DrawRay(transform.position, rayDirection * detectionRange, Color.yellow);
 
 			// プレイヤーに命中したか.
-			if (hit.collider != null && hit.collider.CompareTag(playerTag))
+			if (hit.collider != null)
 			{
-				Debug.DrawRay(transform.position, rayDirection * hit.distance, Color.green);
-				return true;
+				Debug.Log($"🎯 Ray {i}: 何かに命中 - オブジェクト名: {hit.collider.gameObject.name}, タグ: {hit.collider.tag}, 距離: {hit.distance}");
+
+				if (hit.collider.CompareTag(playerTag))
+				{
+					Debug.DrawRay(transform.position, rayDirection * hit.distance, Color.green);
+					Debug.Log($"✅ プレイヤーを検出しました！");
+					return true;
+				}
+			}
+			else
+			{
+				Debug.Log($"🎯 Ray {i}: 何も命中しません");
 			}
 		}
 
@@ -318,7 +345,7 @@ public class BaseEnemy : MonoBehaviour
 	{
 		if (rb != null)
 		{
-			rb.velocity = direction;
+			rb.linearVelocity = direction;
 		}
 	}
 
@@ -336,7 +363,7 @@ public class BaseEnemy : MonoBehaviour
 
 	#endregion
 
-	#region ダメージとHP.
+	#region ダメージと健康.
 
 	/// <summary>
 	/// 敵にダメージを与えます.

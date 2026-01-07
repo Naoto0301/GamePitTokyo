@@ -41,19 +41,23 @@ public class Bullet : MonoBehaviour
 
 	#region Unityライフサイクル.
 
-	/// <summary>
-	/// 初期化処理.
-	/// </summary>
 	private void Start()
 	{
 		rb = GetComponent<Rigidbody2D>();
 		elapsedTime = 0f;
 		hasHit = false;
+
+		Debug.Log($"🎯 Bullet Start()実行");
+
+		if (rb == null)
+		{
+			Debug.LogError($"❌ Rigidbody2Dが見つかりません！弾に付けてください");
+			return;
+		}
+
+		Debug.Log($"🎯 弾生成: 速度={rb.linearVelocity}, 位置={transform.position}");
 	}
 
-	/// <summary>
-	/// 毎フレーム実行される処理.
-	/// </summary>
 	private void Update()
 	{
 		// 生存時間をカウント.
@@ -63,6 +67,12 @@ public class Bullet : MonoBehaviour
 		if (elapsedTime >= lifeTime)
 		{
 			DestroyBullet();
+		}
+
+		// 毎フレーム速度をログ出力（デバッグ用）
+		if (rb != null)
+		{
+			Debug.Log($"⚡ 弾の速度: {rb.linearVelocity}");
 		}
 	}
 
@@ -120,17 +130,17 @@ public class Bullet : MonoBehaviour
 		hasHit = true;
 
 		// プレイヤーのPlayerHealthスクリプトを取得.
-		//PlayerHealth playerHealth = playerCollider.GetComponent<PlayerHealth>();
+		Playerkari playerHealth = playerCollider.GetComponent<Playerkari>();
 
-		//if (playerHealth != null)
-		//{
-		//	playerHealth.TakeDamage(damage);
-		//	Debug.Log($"プレイヤーが弾に衝突！ダメージ: {damage}");
-		//}
-		//else
-		//{
-		//	Debug.LogWarning("プレイヤーに PlayerHealth スクリプトが見つかりません.");
-		//}
+		if (playerHealth != null)
+		{
+			playerHealth.TakeDamage(damage);
+			Debug.Log($"プレイヤーが弾に衝突！ダメージ: {damage}");
+		}
+		else
+		{
+			Debug.LogWarning("プレイヤーに PlayerHealth スクリプトが見つかりません.");
+		}
 
 		// 弾を破壊.
 		DestroyBullet();

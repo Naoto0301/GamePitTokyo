@@ -1,93 +1,109 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 /// <summary>
-/// ƒvƒŒƒCƒ„[‚ğ’Ç”ö‚µ‚Ä‹ßÚUŒ‚‚·‚é“GƒNƒ‰ƒX.
+/// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’è¿½å°¾ã—ã¦è¿‘æ¥æ”»æ’ƒã™ã‚‹æ•µã‚¯ãƒ©ã‚¹.
+/// æ”»æ’ƒã¯ã‚³ãƒªã‚¸ãƒ§ãƒ³ã§åˆ¤å®šã—ã¾ã™.
 /// </summary>
 public class MeleeEnemy : BaseEnemy
 {
-	#region ƒCƒ“ƒXƒyƒNƒ^[İ’è.
+	#region ã‚¤ãƒ³ã‚¹ãƒšã‚¯ã‚¿ãƒ¼è¨­å®š.
 
-	[Header("‹ßÚ“Gİ’è")]
+	[Header("è¿‘æ¥æ•µè¨­å®š")]
 	[SerializeField]
-	[Tooltip("UŒ‚”ÍˆÍ.")]
+	[Tooltip("æ”»æ’ƒç¯„å›².")]
 	private float attackRange = 1.5f;
 
 	[SerializeField]
-	[Tooltip("UŒ‚ŠÔŠui•bj.")]
+	[Tooltip("æ”»æ’ƒé–“éš”ï¼ˆç§’ï¼‰.")]
 	private float attackCooldown = 1.5f;
 
 	[SerializeField]
-	[Tooltip("UŒ‚‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‚ğÄ¶‚·‚éAnimator.")]
+	[Tooltip("æ”»æ’ƒã‚³ãƒªã‚¸ãƒ§ãƒ³ã®åå‰.")]
+	private string attackColliderName = "AttackCollider";
+
+	[SerializeField]
+	[Tooltip("æ”»æ’ƒæ™‚ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’å†ç”Ÿã™ã‚‹Animator.")]
 	private Animator animator;
 
 	[SerializeField]
-	[Tooltip("UŒ‚ƒAƒjƒ[ƒVƒ‡ƒ“ƒpƒ‰ƒ[ƒ^–¼.")]
+	[Tooltip("æ”»æ’ƒã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿å.")]
 	private string attackAnimationTrigger = "Attack";
 
 	#endregion
 
-	#region ƒvƒ‰ƒCƒx[ƒg•Ï”.
+
+	#region ãƒ—ãƒ©ã‚¤ãƒ™ãƒ¼ãƒˆå¤‰æ•°.
 
 	private float attackTimer = 0f;
-	private bool isAttacking = false;
+	private Collider2D attackCollider;
 
 	#endregion
 
-	#region Unityƒ‰ƒCƒtƒTƒCƒNƒ‹.
+	#region Unityãƒ©ã‚¤ãƒ•ã‚µã‚¤ã‚¯ãƒ«.
 
 	/// <summary>
-	/// ‰Šú‰»ˆ—.
+	/// åˆæœŸåŒ–å‡¦ç†.
 	/// </summary>
 	protected override void Start()
 	{
 		base.Start();
+		attackTimer = attackCooldown;
 
-		// Animator‚ªw’è‚³‚ê‚Ä‚¢‚È‚¢ê‡‚Í©“®æ“¾.
+		// AnimatorãŒæŒ‡å®šã•ã‚Œã¦ã„ãªã„å ´åˆã¯è‡ªå‹•å–å¾—.
 		if (animator == null)
 		{
 			animator = GetComponent<Animator>();
 		}
 
-		attackTimer = attackCooldown;
+		// æ”»æ’ƒã‚³ãƒªã‚¸ãƒ§ãƒ³ã‚’å–å¾—.
+		FindAttackCollider();
+
+		Debug.Log($"âœ… MeleeEnemyåˆæœŸåŒ–å®Œäº†");
 	}
 
 	#endregion
 
-	#region ’Ç”ö‚ÆUŒ‚.
+	#region è¿½å°¾ã¨æ”»æ’ƒ.
 
 	/// <summary>
-	/// ƒvƒŒƒCƒ„[‚ªŒŸo‚³‚ê‚½A’Ç”ö‚µ‚ÄUŒ‚‚µ‚Ü‚·.
+	/// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒæ¤œå‡ºã•ã‚ŒãŸæ™‚ã€è¿½å°¾ã—ã¦æ”»æ’ƒã—ã¾ã™.
 	/// </summary>
 	protected override void OnPlayerDetected()
 	{
+		Debug.Log("ğŸ¯ OnPlayerDetected() å®Ÿè¡Œ!");
+
 		if (playerTransform == null)
+		{
+			Debug.Log("âš ï¸ playerTransformãŒnullã§ã™");
 			return;
+		}
 
 		float distanceToPlayer = Vector2.Distance(transform.position, playerTransform.position);
 		Vector2 directionToPlayer = GetDirectionToPlayer();
 
-		// “G‚ÌŒü‚«‚ğƒvƒŒƒCƒ„[•ûŒü‚ÉXV.
+		Debug.Log($"ğŸ“ ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼è·é›¢: {distanceToPlayer}, æ–¹å‘: {directionToPlayer}");
+
+		// æ•µã®å‘ãã‚’ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼æ–¹å‘ã«æ›´æ–°.
 		UpdateFacingDirection(directionToPlayer);
 
-		// UŒ‚”ÍˆÍŠO‚È‚ç’Ç”ö.
+		// æ”»æ’ƒç¯„å›²å¤–ãªã‚‰è¿½å°¾.
 		if (distanceToPlayer > attackRange)
 		{
-			// X²‚Ì‚İˆÚ“®i’nã“G—pj.
+			Debug.Log($"ğŸš¶ ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã«è¿½å°¾ä¸­...");
+			// Xè»¸ã®ã¿ç§»å‹•ï¼ˆåœ°ä¸Šæ•µç”¨ï¼‰.
 			Move(new Vector2(directionToPlayer.x * chaseSpeed, 0));
-			isAttacking = false;
 		}
-		// UŒ‚”ÍˆÍ“à‚È‚çUŒ‚.
+		// æ”»æ’ƒç¯„å›²å†…ãªã‚‰æ”»æ’ƒ.
 		else
 		{
+			Debug.Log($"âš”ï¸ æ”»æ’ƒç¯„å›²å†…ï¼æ”»æ’ƒé–‹å§‹ï¼");
 			Move(Vector2.zero);
 			Attack();
 		}
-
-		Debug.Log($"ƒvƒŒƒCƒ„[‚ğ”­Œ©I‹——£: {distanceToPlayer}, •ûŒü: {directionToPlayer}");
 	}
 
 	/// <summary>
-	/// ƒvƒŒƒCƒ„[‚ÉUŒ‚‚µ‚Ü‚·.
+	/// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã«æ”»æ’ƒã—ã¾ã™.
 	/// </summary>
 	private void Attack()
 	{
@@ -96,88 +112,84 @@ public class MeleeEnemy : BaseEnemy
 		if (attackTimer >= attackCooldown)
 		{
 			attackTimer = 0f;
-			isAttacking = true;
+			Debug.Log($"ğŸ’¥ è¿‘æ¥æ•µãŒæ”»æ’ƒï¼");
 
-			// ƒAƒjƒ[ƒVƒ‡ƒ“Ä¶.
+			// æ”»æ’ƒã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿ.
 			PlayAttackAnimation();
 
-			// ƒvƒŒƒCƒ„[‚Éƒ_ƒ[ƒW‚ğ—^‚¦‚é.
-			DealDamageToPlayer();
-
-			Debug.Log($"‹ßÚ“G‚ªUŒ‚Iƒ_ƒ[ƒW: {attackPower}");
+			// æ”»æ’ƒã‚³ãƒªã‚¸ãƒ§ãƒ³ã‚’æœ‰åŠ¹åŒ–.
+			EnableAttackCollider();
 		}
 	}
 
 	/// <summary>
-	/// UŒ‚ƒAƒjƒ[ƒVƒ‡ƒ“‚ğÄ¶‚µ‚Ü‚·.
+	/// æ”»æ’ƒã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’å†ç”Ÿã—ã¾ã™.
 	/// </summary>
 	private void PlayAttackAnimation()
 	{
 		if (animator != null)
 		{
 			animator.SetTrigger(attackAnimationTrigger);
+			Debug.Log($"ğŸ¬ æ”»æ’ƒã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿ");
 		}
-	}
-
-	/// <summary>
-	/// ƒvƒŒƒCƒ„[‚Éƒ_ƒ[ƒW‚ğ—^‚¦‚Ü‚·.
-	/// </summary>
-	private void DealDamageToPlayer()
-	{
-		if (playerTransform == null)
-			return;
-
-		//// ƒvƒŒƒCƒ„[ƒXƒNƒŠƒvƒg‚Ìæ“¾‚ğ‚İ‚é.
-		//PlayerHealth playerHealth = playerTransform.GetComponent<PlayerHealth>();
-
-		//if (playerHealth != null)
-		//{
-		//	playerHealth.TakeDamage(attackPower);
-		//}
-		//else
-		//{
-		//	Debug.LogWarning("ƒvƒŒƒCƒ„[‚É PlayerHealth ƒXƒNƒŠƒvƒg‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ.");
-		//}
 	}
 
 	#endregion
 
-	#region “G‚ÌŒü‚«XV.
+	#region æ”»æ’ƒã‚³ãƒªã‚¸ãƒ§ãƒ³ç®¡ç†.
 
 	/// <summary>
-	/// ˆÚ“®•ûŒü‚É“G‚ÌŒü‚«‚ğXV‚µ‚Ü‚·.
+	/// æ”»æ’ƒã‚³ãƒªã‚¸ãƒ§ãƒ³ã‚’è¦‹ã¤ã‘ã¾ã™.
 	/// </summary>
-	/// <param name="direction">ˆÚ“®•ûŒü.</param>
-	private void UpdateFacingDirection(Vector2 direction)
+	private void FindAttackCollider()
 	{
-		// “G‚ğ‰ñ“]‚³‚¹‚éiˆÚ“®•ûŒü‚É‰‚¶‚Äj.
-		if (direction.x > 0.1f)
+		// å­ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‹ã‚‰æ”»æ’ƒã‚³ãƒªã‚¸ãƒ§ãƒ³ã‚’æ¢ã™.
+		foreach (Transform child in transform)
 		{
-			facingDirection = 1;
-			transform.rotation = Quaternion.identity;
+			if (child.name == attackColliderName)
+			{
+				attackCollider = child.GetComponent<Collider2D>();
+				if (attackCollider != null)
+				{
+					// åˆæœŸçŠ¶æ…‹ã¯ç„¡åŠ¹.
+					attackCollider.enabled = false;
+					Debug.Log($"âœ… æ”»æ’ƒã‚³ãƒªã‚¸ãƒ§ãƒ³å–å¾—: {attackColliderName}");
+					return;
+				}
+			}
 		}
-		else if (direction.x < -0.1f)
-		{
-			facingDirection = -1;
-			transform.rotation = Quaternion.Euler(0, 180, 0);
-		}
+
+		Debug.LogWarning($"âš ï¸ æ”»æ’ƒã‚³ãƒªã‚¸ãƒ§ãƒ³ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“: {attackColliderName}");
 	}
-
-	#endregion
-
-	#region ƒfƒoƒbƒO—p.
 
 	/// <summary>
-	/// Scene ƒrƒ…[‚ÉUŒ‚”ÍˆÍ‚ğ•`‰æ‚µ‚Ü‚·.
+	/// æ”»æ’ƒã‚³ãƒªã‚¸ãƒ§ãƒ³ã‚’æœ‰åŠ¹åŒ–ã—ã¾ã™.
 	/// </summary>
-	protected override void OnDrawGizmosSelected()
+	private void EnableAttackCollider()
 	{
-		base.OnDrawGizmosSelected();
+		if (attackCollider != null)
+		{
+			attackCollider.enabled = true;
+			Debug.Log($"ğŸ”“ æ”»æ’ƒã‚³ãƒªã‚¸ãƒ§ãƒ³æœ‰åŠ¹åŒ–");
 
-		// UŒ‚”ÍˆÍ‚ğ•`‰æ.
-		Gizmos.color = Color.red;
-		Gizmos.DrawWireSphere(transform.position, attackRange);
+			// 0.5ç§’å¾Œã«ç„¡åŠ¹åŒ–.
+			Invoke(nameof(DisableAttackCollider), 0.5f);
+		}
+	}
+
+	/// <summary>
+	/// æ”»æ’ƒã‚³ãƒªã‚¸ãƒ§ãƒ³ã‚’ç„¡åŠ¹åŒ–ã—ã¾ã™.
+	/// </summary>
+	private void DisableAttackCollider()
+	{
+		if (attackCollider != null)
+		{
+			attackCollider.enabled = false;
+			Debug.Log($"ğŸ”’ æ”»æ’ƒã‚³ãƒªã‚¸ãƒ§ãƒ³ç„¡åŠ¹åŒ–");
+		}
 	}
 
 	#endregion
+
+
 }
