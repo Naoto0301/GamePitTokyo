@@ -24,12 +24,25 @@ public class Playerkari : MonoBehaviour
 	[SerializeField]
 	[Tooltip("プレイヤーのジャンプ力.")]
 	private float jumpPower = 10f;
+
+	[Header("ジャンプ設定")]
+	[SerializeField]
+	[Tooltip("重力の倍率.")]
+	private float gravityScale = 1f;
+	[SerializeField]
+	[Tooltip("地面判定用のタグ.")]
+	private string groundTag = "TestGround";
 	#endregion
 
 	#region プライベート変数.
 	private float currentHP;
 	private Rigidbody2D rb;
+	private Animator animator;
+	private SpriteRenderer spriteRenderer;
 	private Vector2 moveDirection = Vector2.zero;
+	private bool isGrounded = false;
+	private bool isJumping = false;
+	private bool isFacingRight = true;
 	#endregion
 
 	#region Unityライフサイクル.
@@ -40,6 +53,9 @@ public class Playerkari : MonoBehaviour
 	{
 		currentHP = maxHP;
 		rb = GetComponent<Rigidbody2D>();
+		animator = GetComponent<Animator>();
+		spriteRenderer = GetComponent<SpriteRenderer>();
+		rb.gravityScale = gravityScale;
 		// このGameObjectに"Player"タグを設定.
 		gameObject.tag = "Player";
 		Debug.Log("✅ プレイヤー初期化完了");
@@ -52,6 +68,8 @@ public class Playerkari : MonoBehaviour
 	private void Update()
 	{
 		HandleInput();
+		UpdateAnimation();
+		UpdateDirection();
 	}
 
 	/// <summary>
@@ -88,6 +106,12 @@ public class Playerkari : MonoBehaviour
 		{
 			moveDirection.y = -1f;
 		}
+
+		// ジャンプ入力.
+		if (Input.GetKeyDown(KeyCode.Space) && isGrounded && !isJumping)
+		{
+			Jump();
+		}
 	}
 	#endregion
 
@@ -100,6 +124,82 @@ public class Playerkari : MonoBehaviour
 		if (rb != null)
 		{
 			rb.linearVelocity = new Vector2(moveDirection.x * moveSpeed, rb.linearVelocity.y);
+		}
+	}
+	#endregion
+
+	#region ジャンプ.
+	/// <summary>
+	/// プレイヤーがジャンプします.
+	/// </summary>
+	private void Jump()
+	{
+		rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpPower);
+		isJumping = true;
+		isGrounded = false;
+		animator.SetTrigger("Jump");
+		Debug.Log("🚀 ジャンプしました！");
+	}
+
+	/// <summary>
+	/// 地面との接触判定をリセットします.
+	/// 地面スクリプトから呼び出してください.
+	/// </summary>
+	public void SetGrounded(bool grounded)
+	{
+		isGrounded = grounded;
+		if (grounded)
+		{
+			isJumping = false;
+		}
+	}
+	#endregion
+
+	#region アニメーション.
+	/// <summary>
+	/// アニメーションの状態を更新します.
+	/// </summary>
+	private void UpdateAnimation()
+	{
+		if (animator == null) return;
+
+		// 垂直速度を取得
+		float verticalVelocity = rb.linearVelocity.y;
+
+		// アニメーションパラメータを設定
+		animator.SetFloat("MoveX", moveDirection.x);
+		animator.SetFloat("MoveY", moveDirection.y);
+		animator.SetBool("IsGrounded", isGrounded);
+		animator.SetBool("IsMoving", moveDirection.magnitude > 0);
+		animator.SetBool("IsJumping", isJumping);
+		animator.SetBool("IsFalling", !isGrounded && verticalVelocity < -0.5f);
+		animator.SetFloat("VerticalVelocity", verticalVelocity);
+	}
+
+	/// <summary>
+	/// プレイヤーの向きを更新します.
+	/// </summary>
+	private void UpdateDirection()
+	{
+		if (moveDirection.x > 0 && isFacingRight)
+		{
+			Flip();
+		}
+		else if (moveDirection.x < 0 && !isFacingRight)
+		{
+			Flip();
+		}
+	}
+
+	/// <summary>
+	/// プレイヤーを反転させます.
+	/// </summary>
+	private void Flip()
+	{
+		isFacingRight = !isFacingRight;
+		if (spriteRenderer != null)
+		{
+			spriteRenderer.flipX = !spriteRenderer.flipX;
 		}
 	}
 	#endregion
@@ -128,6 +228,24 @@ public class Playerkari : MonoBehaviour
 	{
 		Debug.Log("💀 プレイヤーが死亡しました");
 		Destroy(gameObject);
+	}
+
+	private void OnCollisionEnter2D(Collision2D collision)
+	{
+		if (collision.gameObject.CompareTag(groundTag))
+		{
+			SetGrounded(true);
+			Debug.Log("✅ 地面に着地しました");
+		}
+	}
+
+	private void OnCollisionExit2D(Collision2D collision)
+	{
+		if (collision.gameObject.CompareTag(groundTag))
+		{
+			SetGrounded(false);
+			Debug.Log("🔺 地面から離れました");
+		}
 	}
 
 	private void OnTriggerEnter2D(Collider2D collision)
