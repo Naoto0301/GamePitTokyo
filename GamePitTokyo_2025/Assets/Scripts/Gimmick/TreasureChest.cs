@@ -57,11 +57,6 @@ public class TreasureChest : MonoBehaviour
 			interactKeyPressed = true;
 			Debug.Log("🔑 インタラクションキーが押されました");
 		}
-
-		if (cardSelectionActive)
-		{
-			HandleCardSelection();
-		}
 	}
 	#endregion
 
@@ -112,39 +107,32 @@ public class TreasureChest : MonoBehaviour
 	/// </summary>
 	private void DisplayCardOptions()
 	{
-		Debug.Log("\n--- カード選択 ---");
+		// UI Panel で表示（宝箱参照も渡す）
+		CardUIPanelDisplay.ShowCardSelection(availableCards, this);
+
+		Debug.Log("\n========== カード選択 ==========");
 		for (int i = 0; i < availableCards.Length; i++)
 		{
-			Debug.Log($"{i + 1}: {availableCards[i].GetCardInfo()}");
+			Debug.Log($"\n【カード {i + 1}】");
+			Debug.Log(availableCards[i].GetCardInfo());
 		}
-		Debug.Log("数字キー（1、2、3）でカードを選択してください");
-	}
-
-	/// <summary>
-	/// カード選択の入力を処理します.
-	/// </summary>
-	private void HandleCardSelection()
-	{
-		if (Input.GetKeyDown(KeyCode.Alpha1))
-		{
-			SelectCard(0);
-		}
-		else if (Input.GetKeyDown(KeyCode.Alpha2))
-		{
-			SelectCard(1);
-		}
-		else if (Input.GetKeyDown(KeyCode.Alpha3))
-		{
-			SelectCard(2);
-		}
+		Debug.Log("\n=================================");
+		Debug.Log("数字キー（1、2、3）またはクリックでカードを選択してください");
+		Debug.Log("=================================\n");
 	}
 
 	/// <summary>
 	/// カードを選択して効果を適用します.
 	/// </summary>
 	/// <param name="cardIndex">選択したカードのインデックス.</param>
-	private void SelectCard(int cardIndex)
+	public void SelectCard(int cardIndex)
 	{
+		if (!cardSelectionActive)
+		{
+			Debug.Log("⚠️ 現在カード選択中ではありません");
+			return;
+		}
+
 		if (cardIndex < 0 || cardIndex >= availableCards.Length)
 		{
 			Debug.Log("⚠️ 無効なカード選択です");
@@ -167,6 +155,10 @@ public class TreasureChest : MonoBehaviour
 		}
 
 		cardSelectionActive = false;
+
+		// UI を非表示
+		CardUIPanelDisplay.HideCardSelection();
+
 		Debug.Log($"✅ {selectedCard.GetCardName()}を選択しました！");
 	}
 	#endregion
