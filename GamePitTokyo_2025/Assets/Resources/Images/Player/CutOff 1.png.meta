@@ -1,0 +1,355 @@
+fileFormatVersion: 2
+guid: 03f3119a4c7f10d4ba87fd1a331110da
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 993711830984211149
+    second: CutOff 1_0
+  - first:
+      213: 9024372230337358325
+    second: CutOff 1_1
+  - first:
+      213: 9183583056507640519
+    second: CutOff 1_2
+  - first:
+      213: 2344922535885310875
+    second: CutOff 1_3
+  - first:
+      213: 3833204131337929737
+    second: CutOff 1_4
+  - first:
+      213: -734995338502195245
+    second: CutOff 1_5
+  - first:
+      213: 4859111612735463717
+    second: CutOff 1_6
+  - first:
+      213: -167576075614176906
+    second: CutOff 1_7
+  - first:
+      213: -9092999551752115685
+    second: CutOff 1_8
+  - first:
+      213: 1518122549233630807
+    second: CutOff 1_9
+  - first:
+      213: -7047926322437540032
+    second: CutOff 1_10
+  - first:
+      213: -2947389196157880306
+    second: CutOff 1_11
+  - first:
+      213: -7424867155728966924
+    second: CutOff 1_12
+  - first:
+      213: 2143020140979118735
+    second: CutOff 1_13
+  - first:
+      213: 5643779396108163157
+    second: CutOff 1_14
+  - first:
+      213: -1949756578504245163
+    second: CutOff 1_15
+  - first:
+      213: 2344805875569241760
+    second: CutOff 1_16
+  - first:
+      213: -2094763471590945137
+    second: CutOff 1_17
+  - first:
+      213: -8992846354692191433
+    second: CutOff 1_18
+  - first:
+      213: 621685688057938238
+    second: CutOff 1_19
+  - first:
+      213: -3329108086996856168
+    second: CutOff 1_20
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 322
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: CutOff 1_0
+      rect:
+        serializedVersion: 2
+        x: 230
+        y: 0
+        width: 500
+        height: 500
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8c5d74b7a9886ec4c95766e591d188e7
+      internalID: -292307065
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CutOff 1_1
+      rect:
+        serializedVersion: 2
+        x: 707
+        y: 0
+        width: 400
+        height: 500
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0d90fbd386911a0429ccbef3a61b5701
+      internalID: 940167400
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CutOff 1_2
+      rect:
+        serializedVersion: 2
+        x: 1224
+        y: 0
+        width: 500
+        height: 500
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 868a242cb8452ee43aac4824b775c834
+      internalID: -398766193
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CutOff 1_3
+      rect:
+        serializedVersion: 2
+        x: 1698
+        y: 0
+        width: 400
+        height: 500
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 273765946ee7f9b41ac44d9bbf57f15b
+      internalID: 1585357186
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CutOff 1_4
+      rect:
+        serializedVersion: 2
+        x: 2150
+        y: 0
+        width: 500
+        height: 500
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cb34610bb7e3e764bbc1c4ddda587050
+      internalID: 1072055901
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CutOff 1_5
+      rect:
+        serializedVersion: 2
+        x: 2709
+        y: 0
+        width: 500
+        height: 500
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 318081d605c960542b657f0aeb35af87
+      internalID: -797150965
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CutOff 1_6
+      rect:
+        serializedVersion: 2
+        x: 3223
+        y: 0
+        width: 600
+        height: 500
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c4dfa316afba21e42bd44f24aa885dec
+      internalID: 745317382
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 6002b867a32d7c345af3fb1d702c3891
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      CutOff 1_0: -292307065
+      CutOff 1_1: 940167400
+      CutOff 1_2: -398766193
+      CutOff 1_3: 1585357186
+      CutOff 1_4: 1072055901
+      CutOff 1_5: -797150965
+      CutOff 1_6: 745317382
+      CutOff 1_7: 1396950599
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
