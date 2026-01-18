@@ -1,269 +1,253 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class TerrariaMapGen : MonoBehaviour
+#region enums
+
+public enum TileType
 {
-    [Header("=== Map Settings ===")]
+    Air = 0,
+    Solid = 1,
+    Cave = 2
+}
+
+
+#endregion
+
+public class MapManager : MonoBehaviour
+{
+    [Header("=== Map ===")]
     public int width = 200;
     public int height = 120;
+    public Vector2 mapStart = new Vector2(-8, 0);
     public float noiseScale = 0.05f;
 
-    public Vector2 mapStart = new Vector2(-8.0f, 0);
+    [Header("=== Surface ===")]
+    public int p1_height = 20;
+    public int p2_height = 40;
 
-    [Header("=== Surface Control ===")]
-    public int p1_height = 20;  // 左の高さ
-    public int p2_height = 40;  // 右の高さ
+    [Header("=== Cave Path ===")]
+    public int caveCount = 8;
+    public int caveRadius = 2;
+    public float caveDownBias = 0.35f;
+    public float caveTurnRate = 0.3f;
 
-    [Header("=== Cave Settings ===")]
-    public int caveSeed = 0;
-    public float caveFillPercent = 0.45f;
-    public int smoothCount = 5;
+    [Header("=== Cave Rooms ===")]
+    public float caveRoomChance = 0.07f;
+    public int caveRoomMinRadius = 4;
+    public int caveRoomMaxRadius = 7;
+    public int caveRoomStartStep = 18;
 
-    [Header("=== Prefabs ===")]
+    [Header("=== Bedrock ===")]
+    public int bedrockHeight = 3;
+
+    [Header("=== Prefab ===")]
     public GameObject blockPrefab;
 
-    private int[,] map;              // 0 = 空洞、1 = 地形
-    private GameObject[,] blocks;    // 生成したGameObject格納
-
+    TileType[,] map;
 
     void Start()
     {
         Generate();
     }
 
-
-    // =============================================================
-    //  メイン処理
-    // =============================================================
-    public void Generate()
+    // =========================================================
+    void Generate()
     {
-        map = new int[width, height];
-        blocks = new GameObject[width, height];
+        map = new TileType[width, height];
 
-        GenerateGroundShape();   // 地形ライン
-        FillTerrainBelowLine();  // 下を埋める
-        GenerateCave();          // 洞窟掘り
-
-        KeepOnlyConnectedToSurface();
-
-        BuildGameObjects();      // 表面だけ当たり判定 ON
+        GenerateSurface();
+        FillBelowSurface();
+        GenerateCaves();
+        ForceBedrock();
+        BuildBlocks();
     }
 
-
-    // =============================================================
-    //  地形の上辺ライン生成（2点補完 + Perlin）
-    // =============================================================
-    void GenerateGroundShape()
+    // =========================================================
+    void GenerateSurface()
     {
         for (int x = 0; x < width; x++)
         {
-            float t = (float)x / (width - 1);  // 0 → 1
-            float baseHeight = Mathf.Lerp(p1_height, p2_height, t);
+            float t = (float)x / (width - 1);
+            float h = Mathf.Lerp(p1_height, p2_height, t);
+            h += Mathf.PerlinNoise(x * noiseScale, 0) * 10f;
 
-            float perlin = Mathf.PerlinNoise(x * noiseScale, 0) * 10f;
-
-            int h = Mathf.RoundToInt(baseHeight + perlin);
-
-            h = Mathf.Clamp(h, 0, height - 1);
-
-            map[x, h] = 1;  // 地形の上端
+            int y = Mathf.Clamp(Mathf.RoundToInt(h), 0, height - 1);
+            map[x, y] = TileType.Solid;
         }
     }
 
-
-    // =============================================================
-    //  地形ラインより下を全部埋める
-    // =============================================================
-    void FillTerrainBelowLine()
+    void FillBelowSurface()
     {
         for (int x = 0; x < width; x++)
         {
-            int top = -1;
-            for (int y = height - 1; y >= 0; y--)
-            {
-                if (map[x, y] == 1)
-                {
-                    top = y;
-                    break;
-                }
-            }
-
-            if (top == -1) continue;
-
+            int top = GetSurfaceY(x);
             for (int y = top - 1; y >= 0; y--)
-            {
-                map[x, y] = 1;
-            }
+                map[x, y] = TileType.Solid;
         }
     }
 
-
-    // =============================================================
-    //  洞窟生成（セルオートマトン）
-    // =============================================================
-    void GenerateCave()
+    // =========================================================
+    void GenerateCaves()
     {
-        System.Random rand = (caveSeed == 0)
-            ? new System.Random()
-            : new System.Random(caveSeed);
+        System.Random rand = new System.Random();
 
-        // 最初にランダムな空洞生成
-        for (int x = 1; x < width - 1; x++)
+        for (int i = 0; i < caveCount; i++)
         {
-            for (int y = 1; y < height - 1; y++)
-            {
-                if (rand.NextDouble() < caveFillPercent)
-                    map[x, y] = 0;
-            }
-        }
+            int x = rand.Next(5, width - 5);
+            int y = GetSurfaceY(x) - 1;
+            if (y <= 0) continue;
 
-        // スムージング複数回
-        for (int i = 0; i < smoothCount; i++)
-            SmoothMap();
+            DigCave(x, y, rand);
+        }
     }
 
-    void SmoothMap()
+    void DigCave(int x, int y, System.Random rand)
     {
-        int[,] newMap = new int[width, height];
+        int length = rand.Next(40, 90);
+        Vector2 pos = new Vector2(x, y);
 
-        for (int x = 1; x < width - 1; x++)
+        Vector2 dir = new Vector2(
+            (float)(rand.NextDouble() * 2 - 1),
+            -(float)rand.NextDouble()
+        ).normalized;
+
+        for (int i = 0; i < length; i++)
         {
-            for (int y = 1; y < height - 1; y++)
+            CarveCircle((int)pos.x, (int)pos.y, caveRadius);
+
+            if (i > caveRoomStartStep && rand.NextDouble() < caveRoomChance)
             {
-                int walls = GetSurroundWallCount(x, y);
-
-                if (walls > 4)
-                    newMap[x, y] = 1;
-                else if (walls < 4)
-                    newMap[x, y] = 0;
-                else
-                    newMap[x, y] = map[x, y];
+                int r = rand.Next(caveRoomMinRadius, caveRoomMaxRadius + 1);
+                CarveRoom((int)pos.x, (int)pos.y, r);
             }
-        }
 
-        map = newMap;
+            Vector2 turn = new Vector2(
+                (float)(rand.NextDouble() * 2 - 1),
+                (float)(rand.NextDouble() * 2 - 1)
+            ) * caveTurnRate;
+
+            dir = (dir + turn + Vector2.down * caveDownBias).normalized;
+            pos += dir;
+
+            pos.x = Mathf.Clamp(pos.x, 2, width - 3);
+            pos.y = Mathf.Clamp(pos.y, bedrockHeight + 2, height - 3);
+        }
     }
 
-    int GetSurroundWallCount(int x, int y)
+    void CarveCircle(int cx, int cy, int r)
     {
-        int cnt = 0;
-        for (int nx = x - 1; nx <= x + 1; nx++)
-        {
-            for (int ny = y - 1; ny <= y + 1; ny++)
+        for (int dx = -r; dx <= r; dx++)
+            for (int dy = -r; dy <= r; dy++)
             {
-                if (nx == x && ny == y) continue;
-                if (map[nx, ny] == 1) cnt++;
+                if (dx * dx + dy * dy > r * r) continue;
+
+                int nx = cx + dx;
+                int ny = cy + dy;
+
+                if (!InRange(nx, ny) || ny < bedrockHeight) continue;
+                map[nx, ny] = TileType.Cave;
             }
-        }
-        return cnt;
+    }
+
+    void CarveRoom(int cx, int cy, int r)
+    {
+        for (int dx = -r; dx <= r; dx++)
+            for (int dy = -r; dy <= r; dy++)
+            {
+                float d = dx * dx + dy * dy;
+                float n = Mathf.PerlinNoise((cx + dx) * 0.15f, (cy + dy) * 0.15f);
+                if (d > r * r * (0.7f + n * 0.6f)) continue;
+
+                int nx = cx + dx;
+                int ny = cy + dy;
+
+                if (!InRange(nx, ny) || ny < bedrockHeight) continue;
+                map[nx, ny] = TileType.Cave;
+            }
+    }
+
+    void ForceBedrock()
+    {
+        for (int x = 0; x < width; x++)
+            for (int y = 0; y < bedrockHeight; y++)
+                map[x, y] = TileType.Solid;
+    }
+
+    // =========================================================
+    void BuildBlocks()
+    {
+        GameObject root = new GameObject("MapRoot");
+
+        for (int x = 0; x < width; x++)
+            for (int y = 0; y < height; y++)
+            {
+                if (map[x, y] != TileType.Solid) continue;
+
+                Vector3 pos = new Vector3(mapStart.x + x, mapStart.y + y, 0);
+                var obj = Instantiate(blockPrefab, pos, Quaternion.identity, root.transform);
+
+                var tile = obj.GetComponent<TileBaseEX>();
+                tile.exposed = GetExposedDir(x, y);
+                tile.corner = GetCornerType(x, y);
+                tile.ApplyVisual();
+
+                tile.isHit = tile.exposed.HasFlag(ExposedDir.Up);
+            }
+    }
+
+    // =========================================================
+    ExposedDir GetExposedDir(int x, int y)
+    {
+        ExposedDir d = ExposedDir.None;
+        if (IsOpen(x, y + 1)) d |= ExposedDir.Up;
+        if (IsOpen(x, y - 1)) d |= ExposedDir.Down;
+        if (IsOpen(x - 1, y)) d |= ExposedDir.Left;
+        if (IsOpen(x + 1, y)) d |= ExposedDir.Right;
+        return d;
+    }
+
+    CornerType GetCornerType(int x, int y)
+    {
+        bool up = IsOpen(x, y + 1);
+        bool down = IsOpen(x, y - 1);
+        bool left = IsOpen(x - 1, y);
+        bool right = IsOpen(x + 1, y);
+
+        bool ul = IsOpen(x - 1, y + 1);
+        bool ur = IsOpen(x + 1, y + 1);
+        bool dl = IsOpen(x - 1, y - 1);
+        bool dr = IsOpen(x + 1, y - 1);
+
+        if (up && left && !ul) return CornerType.OuterUpLeft;
+        if (up && right && !ur) return CornerType.OuterUpRight;
+        if (down && left && !dl) return CornerType.OuterDownLeft;
+        if (down && right && !dr) return CornerType.OuterDownRight;
+
+        if (!up && !left && ul) return CornerType.InnerUpLeft;
+        if (!up && !right && ur) return CornerType.InnerUpRight;
+        if (!down && !left && dl) return CornerType.InnerDownLeft;
+        if (!down && !right && dr) return CornerType.InnerDownRight;
+
+        return CornerType.None;
+    }
+
+    // =========================================================
+    bool IsOpen(int x, int y)
+    {
+        if (!InRange(x, y)) return true;
+        return map[x, y] == TileType.Air || map[x, y] == TileType.Cave;
+    }
+
+    bool InRange(int x, int y)
+    {
+        return x >= 0 && x < width && y >= 0 && y < height;
     }
 
     int GetSurfaceY(int x)
     {
         for (int y = height - 1; y >= 0; y--)
-        {
-            if (map[x, y] == 1)
+            if (map[x, y] == TileType.Solid)
                 return y;
-        }
         return -1;
     }
-
-
-    void KeepOnlyConnectedToSurface()
-    {
-        bool[,] visited = new bool[width, height];
-        Queue<Vector2Int> q = new Queue<Vector2Int>();
-
-        // ---- Surface(表面)の下から空洞探索開始 ----
-        for (int x = 0; x < width; x++)
-        {
-            int y = GetSurfaceY(x);
-            if (y == -1) continue;
-
-            // 地表の真下が空洞なら BFS 開始
-            if (y - 1 >= 0 && map[x, y - 1] == 0)
-            {
-                q.Enqueue(new Vector2Int(x, y - 1));
-                visited[x, y - 1] = true;
-            }
-        }
-
-        // ---- BFSで空洞をマーク ----
-        int[] dx = { 1, -1, 0, 0 };
-        int[] dy = { 0, 0, 1, -1 };
-
-        while (q.Count > 0)
-        {
-            var p = q.Dequeue();
-
-            for (int i = 0; i < 4; i++)
-            {
-                int nx = p.x + dx[i];
-                int ny = p.y + dy[i];
-
-                if (nx < 0 || nx >= width || ny < 0 || ny >= height)
-                    continue;
-
-                // 空洞で、まだ訪問していない
-                if (map[nx, ny] == 0 && !visited[nx, ny])
-                {
-                    visited[nx, ny] = true;
-                    q.Enqueue(new Vector2Int(nx, ny));
-                }
-            }
-        }
-
-        // ---- ここに到達しなかった空洞を全部埋める ----
-        for (int x = 0; x < width; x++)
-        {
-            for (int y = 0; y < height; y++)
-            {
-                if (map[x, y] == 0 && !visited[x, y])
-                {
-                    map[x, y] = 1;   // 地形に埋め戻す
-                }
-            }
-        }
-    }
-
-
-
-    // =============================================================
-    //  GameObject 生成（表面だけ isHit = true）
-    // =============================================================
-    void BuildGameObjects()
-    {
-        for (int x = 0; x < width; x++)
-        {
-            for (int y = 0; y < height; y++)
-            {
-                if (map[x, y] == 1)
-                {
-                    Vector3 pos = new Vector3(
-                        mapStart.x + x,
-                        mapStart.y + y,
-                        0
-                    );
-
-                    var obj = Instantiate(blockPrefab, pos, Quaternion.identity);
-                    blocks[x, y] = obj;
-
-                    var tile = obj.GetComponent<TileBaseEX>();
-
-                    // ---- 表面だけ当たり判定 ----
-                    if (IsSurface(x, y))
-                        tile.isHit = true;
-                    else
-                        tile.isHit = false;
-                }
-            }
-        }
-    }
-
-    bool IsSurface(int x, int y)
-    {
-        if (y + 1 >= height) return true;
-        return map[x, y + 1] == 0;
-    }
 }
-
