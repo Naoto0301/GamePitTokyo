@@ -26,6 +26,16 @@ public class O_Player : MonoBehaviour
     float CutOffStartTime = 0f;
     float conboLimit = 0.5f;
 
+    #region  プレイヤーステータス関連
+    [SerializeField]
+    [Tooltip("プレイヤーの最大HP")]
+
+    private float maxHP = 100f;
+    private float currentHP;
+
+    private float p_attackPower;
+    #endregion
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -80,6 +90,11 @@ public class O_Player : MonoBehaviour
                     break;
             }
         };
+    }
+    private void Start()
+    {
+        //HP初期化.
+        currentHP = maxHP;
     }
     private void OnEnable()
     {
@@ -144,19 +159,66 @@ public class O_Player : MonoBehaviour
         animator.ResetTrigger("CutOff2");
         animator.ResetTrigger("CutOff3");
     }
+    #region ダメージ処理
+    // <summary>
+    /// プレイヤーがダメージを受けます.
+    /// </summary>
+    /// <param name="damage">受けるダメージ量.</param>
+    public void TakeDamage(float damage)
+    {
+        currentHP -= damage;
+        Debug.Log($"プレイヤーがダメージを受けた！ 受けたダメージ: {damage}, 現在HP: {currentHP}/{maxHP}");
 
-	internal void IncreaseDefense(float statUpValue)
-	{
-		throw new NotImplementedException();
-	}
+        if (currentHP <= 0)
+        {
+            Die();
+        }
+    }
 
-	internal void IncreaseAttack(float statUpValue)
-	{
-		throw new NotImplementedException();
-	}
+    private void Die()
+    {
+        Debug.Log($" プレイヤーが死亡しました");
+        Destroy(gameObject);
+    }
 
-	internal void IncreaseJumpPower(float statUpValue)
-	{
-		throw new NotImplementedException();
-	}
+    public float GetCurrentHP()
+    {
+        return currentHP;
+    }
+
+    public float GetMaxHP()
+    {
+        return maxHP;
+    }
+
+
+    #endregion
+    // ========== 宝箱システム用メソッド ==========
+
+    /// <summary>
+    /// 攻撃力をアップさせます.
+    /// </summary>
+    public void IncreaseAttack(float amount)
+    {
+        p_attackPower += amount;
+        Debug.Log($" 攻撃力アップ！ 現在の攻撃力: {p_attackPower}");
+    }
+
+    /// <summary>
+    /// 防御力をアップさせます.
+    /// </summary>
+    public void IncreaseDefense(float amount)
+    {
+        p_attackPower += amount;
+        Debug.Log($"防御力アップ！ 現在の防御力: {p_attackPower}");
+    }
+
+    /// <summary>
+    /// ジャンプ力をアップさせます.
+    /// </summary>
+    public void IncreaseJumpPower(float amount)
+    {
+        p_attackPower += amount;
+        Debug.Log($"ジャンプ力アップ！ 現在のジャンプ力ボーナス: {p_attackPower}");
+    }
 }
