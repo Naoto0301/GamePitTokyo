@@ -1,8 +1,7 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
-/// 宝箱システム.
+/// 宝箱システム（O_Player対応）.
 /// </summary>
 public class TreasureChest : MonoBehaviour
 {
@@ -42,7 +41,6 @@ public class TreasureChest : MonoBehaviour
 	/// </summary>
 	private void Start()
 	{
-		// このGameObjectに"Treasure"タグを設定.
 		gameObject.tag = "Treasure";
 		Debug.Log("✅ 宝箱初期化完了");
 	}
@@ -52,7 +50,6 @@ public class TreasureChest : MonoBehaviour
 	/// </summary>
 	private void Update()
 	{
-		// インタラクションキー（E、Space）の入力を検出
 		if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.Space))
 		{
 			interactKeyPressed = true;
@@ -82,13 +79,11 @@ public class TreasureChest : MonoBehaviour
 			Instantiate(jumpPowerUpCardPrefab)
 		};
 
-		// カードの位置を横一列に配置
-		float cardSpacing = 3f; // カード間の距離
+		float cardSpacing = 3f;
 		float startX = transform.position.x - (cardSpacing * (MAX_SELECTABLE_CARDS - 1)) / 2f;
 
 		for (int i = 0; i < availableCards.Length; i++)
 		{
-			// カードのPositionを設定
 			Vector3 cardPosition = new Vector3(
 				startX + (i * cardSpacing),
 				transform.position.y + 3f,
@@ -108,7 +103,6 @@ public class TreasureChest : MonoBehaviour
 	/// </summary>
 	private void DisplayCardOptions()
 	{
-		// UI Panel で表示（宝箱参照も渡す）
 		CardUIPanelDisplay.ShowCardSelection(availableCards, this);
 
 		Debug.Log("\n========== カード選択 ==========");
@@ -125,7 +119,6 @@ public class TreasureChest : MonoBehaviour
 	/// <summary>
 	/// カードを選択して効果を適用します.
 	/// </summary>
-	/// <param name="cardIndex">選択したカードのインデックス.</param>
 	public void SelectCard(int cardIndex)
 	{
 		if (!cardSelectionActive)
@@ -143,10 +136,8 @@ public class TreasureChest : MonoBehaviour
 		selectedCardIndex = cardIndex;
 		StatusUpCard selectedCard = availableCards[selectedCardIndex];
 
-		// プレイヤーにカードの効果を適用
 		selectedCard.ApplyEffect(targetPlayer);
 
-		// 使用済みカードをクリーンアップ
 		foreach (var card in availableCards)
 		{
 			if (card != null)
@@ -156,8 +147,6 @@ public class TreasureChest : MonoBehaviour
 		}
 
 		cardSelectionActive = false;
-
-		// UI を非表示
 		CardUIPanelDisplay.HideCardSelection();
 
 		Debug.Log($"✅ {selectedCard.GetCardName()}を選択しました！");
@@ -172,7 +161,7 @@ public class TreasureChest : MonoBehaviour
 	{
 		if (collision.CompareTag("Player"))
 		{
-			Playerkari player = collision.GetComponent<Playerkari>();
+			O_Player player = collision.GetComponent<O_Player>();
 			if (player != null && !isOpened)
 			{
 				Debug.Log("💬 「Eキー（またはSpaceキー）で宝箱を開ける」");
@@ -185,51 +174,19 @@ public class TreasureChest : MonoBehaviour
 	/// </summary>
 	private void OnTriggerStay2D(Collider2D collision)
 	{
-		Debug.Log($"📍 OnTriggerStay2D呼び出し: {collision.gameObject.name}");
-		Debug.Log($"   CompareTag('Player'): {collision.CompareTag("Player")}");
-		Debug.Log($"   isOpened: {isOpened}");
-		Debug.Log($"   interactKeyPressed: {interactKeyPressed}");
-
 		if (collision.CompareTag("Player"))
 		{
-			Debug.Log("✅ Playerタグが確認されました");
-
-			if (!isOpened)
+			if (!isOpened && interactKeyPressed)
 			{
-				Debug.Log("✅ 宝箱がまだ開いていません");
-
-				if (interactKeyPressed)
+				O_Player player = collision.GetComponent<O_Player>();
+				if (player != null)
 				{
-					Debug.Log("✅ インタラクションキーが押されています");
-					Playerkari player = collision.GetComponent<Playerkari>();
-					Debug.Log($"   プレイヤーコンポーネント: {player}");
-
-					if (player != null)
-					{
-						Debug.Log("🎉 すべての条件を満たしました。宝箱を開きます！");
-						Open(player);
-						interactKeyPressed = false; // フラグをリセット
-					}
-				}
-				else
-				{
-					Debug.Log("❌ interactKeyPressed = false");
+					Debug.Log("🎉 すべての条件を満たしました。宝箱を開きます！");
+					Open(player);
+					interactKeyPressed = false;
 				}
 			}
-			else
-			{
-				Debug.Log("❌ 宝箱は既に開いています");
-			}
 		}
-		else
-		{
-			Debug.Log("❌ Playerタグが見つかりません");
-		}
-	}
-
-	private void Open(Playerkari player)
-	{
-		throw new NotImplementedException();
 	}
 	#endregion
 }

@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -221,4 +220,5 @@ public class O_Player : MonoBehaviour
         p_attackPower += amount;
         Debug.Log($"ジャンプ力アップ！ 現在のジャンプ力ボーナス: {p_attackPower}");
     }
+  
 }
