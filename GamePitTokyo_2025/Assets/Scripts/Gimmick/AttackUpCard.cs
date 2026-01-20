@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 /// <summary>
-/// 攻撃力UP用カード.
+/// 攻撃力UP用カード（O_Player対応）.
 /// </summary>
 public class AttackUpCard : StatusUpCard
 {

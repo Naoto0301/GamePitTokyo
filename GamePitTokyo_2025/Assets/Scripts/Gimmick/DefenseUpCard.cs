@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 /// <summary>
-/// 防御力UP用カード.
+/// 防御力UP用カード（O_Player対応）.
 /// </summary>
 public class DefenseUpCard : StatusUpCard
 {
@@ -14,3 +14,4 @@ public class DefenseUpCard : StatusUpCard
 		Debug.Log($"🛡️ 防御力がアップ！ +{statUpValue}");
 	}
 }
+

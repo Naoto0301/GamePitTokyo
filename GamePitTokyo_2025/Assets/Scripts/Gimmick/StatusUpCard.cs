@@ -1,7 +1,7 @@
 using UnityEngine;
 
 /// <summary>
-/// ステータスアップカードの基底クラス.
+/// ステータスアップカードの基底クラス（O_Player対応）.
 /// </summary>
 public abstract class StatusUpCard : MonoBehaviour
 {
