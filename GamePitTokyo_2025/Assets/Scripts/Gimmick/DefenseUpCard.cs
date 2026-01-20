@@ -8,7 +8,7 @@ public class DefenseUpCard : StatusUpCard
 	/// <summary>
 	/// プレイヤーの防御力をアップさせます.
 	/// </summary>
-	public override void ApplyEffect(Playerkari player)
+	public override void ApplyEffect(O_Player player)
 	{
 		player.IncreaseDefense(statUpValue);
 		Debug.Log($"🛡️ 防御力がアップ！ +{statUpValue}");

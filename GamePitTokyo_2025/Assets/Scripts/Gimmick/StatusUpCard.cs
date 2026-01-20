@@ -24,7 +24,7 @@ public abstract class StatusUpCard : MonoBehaviour
 	/// <summary>
 	/// プレイヤーにステータスアップを適用します.
 	/// </summary>
-	public abstract void ApplyEffect(Playerkari player);
+	public abstract void ApplyEffect(O_Player player);
 
 	/// <summary>
 	/// カード情報を取得します.

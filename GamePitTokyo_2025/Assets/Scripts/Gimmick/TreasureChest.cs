@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 /// <summary>
 /// 宝箱システム.
@@ -30,7 +31,7 @@ public class TreasureChest : MonoBehaviour
 	#region プライベート変数.
 	private StatusUpCard[] availableCards;
 	private int selectedCardIndex = -1;
-	private Playerkari targetPlayer;
+	private O_Player targetPlayer;
 	private bool cardSelectionActive = false;
 	private bool interactKeyPressed = false;
 	#endregion
@@ -64,7 +65,7 @@ public class TreasureChest : MonoBehaviour
 	/// <summary>
 	/// 宝箱を開封してカードを出現させます.
 	/// </summary>
-	public void Open(Playerkari player)
+	public void Open(O_Player player)
 	{
 		if (isOpened)
 		{
@@ -224,6 +225,11 @@ public class TreasureChest : MonoBehaviour
 		{
 			Debug.Log("❌ Playerタグが見つかりません");
 		}
+	}
+
+	private void Open(Playerkari player)
+	{
+		throw new NotImplementedException();
 	}
 	#endregion
 }
