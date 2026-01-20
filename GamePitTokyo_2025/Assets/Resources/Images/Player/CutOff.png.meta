@@ -1,25 +1,70 @@
 fileFormatVersion: 2
-guid: afa4a60e26ef973448a86662a07225fe
+guid: 9b4ed488b64ae674ab1568fcf2379220
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 878130953088834983
-    second: "\u753B\u50CF1_0"
+      213: 8662515714160828470
+    second: CutOff_0
   - first:
-      213: -8931210414240568464
-    second: "\u753B\u50CF1_1"
+      213: 6904507843390389859
+    second: CutOff_1
   - first:
-      213: 1171739225260239514
-    second: "\u753B\u50CF1_2"
+      213: -1080565912927085554
+    second: CutOff_2
   - first:
-      213: -6227024058454513058
-    second: "\u753B\u50CF1_3"
+      213: 3917116862696763937
+    second: CutOff_3
   - first:
-      213: 815125052047079762
-    second: "\u753B\u50CF1_4"
+      213: -1523288464907412655
+    second: CutOff_4
   - first:
-      213: 3861044644077168181
-    second: "\u753B\u50CF1_5"
+      213: -4961067903073418180
+    second: CutOff_5
+  - first:
+      213: -4138399918791746506
+    second: CutOff_6
+  - first:
+      213: 5978090510566758701
+    second: CutOff_7
+  - first:
+      213: 78667580100924533
+    second: CutOff_8
+  - first:
+      213: 9175898917111172682
+    second: CutOff_9
+  - first:
+      213: -3238869124554320189
+    second: CutOff_10
+  - first:
+      213: -8279058565263735420
+    second: CutOff_11
+  - first:
+      213: 3801239254676492550
+    second: CutOff_12
+  - first:
+      213: -4614068002943255076
+    second: CutOff_13
+  - first:
+      213: -5060711093607135408
+    second: CutOff_14
+  - first:
+      213: -8864046446521874671
+    second: CutOff_15
+  - first:
+      213: -7866359038850484773
+    second: CutOff_16
+  - first:
+      213: 3675216659495128820
+    second: CutOff_17
+  - first:
+      213: -4974169512581415701
+    second: CutOff_18
+  - first:
+      213: -5438092251484890267
+    second: CutOff_19
+  - first:
+      213: -1994369757627455942
+    second: CutOff_20
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -66,7 +111,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 320
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -112,19 +157,6 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
-    buildTarget: Android
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
     buildTarget: WebGL
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -141,133 +173,155 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "\u753B\u50CF1_0"
+      name: CutOff_0
       rect:
         serializedVersion: 2
-        x: 9
-        y: 209
-        width: 37
-        height: 42
+        x: 0
+        y: 0
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 7ad9225037fbf2c00800000000000000
-      internalID: 878130953088834983
+      spriteID: dccb918171ddc17488f628de55fe9c8a
+      internalID: 1117768643
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\u753B\u50CF1_1"
+      name: CutOff_1
       rect:
         serializedVersion: 2
-        x: 48
-        y: 10
-        width: 257
-        height: 245
+        x: 500
+        y: 0
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 07bebe4a277fd0480800000000000000
-      internalID: -8931210414240568464
+      spriteID: b6e43692031ebc7488ae6217a214719e
+      internalID: -1160594635
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\u753B\u50CF1_2"
+      name: CutOff_2
       rect:
         serializedVersion: 2
-        x: 125
-        y: 248
-        width: 47
-        height: 52
+        x: 1000
+        y: 0
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: a9a27030e9ad24010800000000000000
-      internalID: 1171739225260239514
+      spriteID: 43e1795fe347c27428cfcd9ac86d6426
+      internalID: 1082168988
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\u753B\u50CF1_3"
+      name: CutOff_3
       rect:
         serializedVersion: 2
-        x: 21
-        y: 106
-        width: 40
-        height: 45
+        x: 1500
+        y: 0
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: e5ae10c6c9a2599a0800000000000000
-      internalID: -6227024058454513058
+      spriteID: d88b7801923934b4c95887142ab34fc2
+      internalID: -772435250
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\u753B\u50CF1_4"
+      name: CutOff_4
       rect:
         serializedVersion: 2
-        x: 292
-        y: 147
-        width: 47
-        height: 53
+        x: 2000
+        y: 0
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 259b9c68ae7ef4b00800000000000000
-      internalID: 815125052047079762
+      spriteID: d0f654f5613567342970734b58266eb8
+      internalID: 1379901352
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "\u753B\u50CF1_5"
+      name: CutOff_5
       rect:
         serializedVersion: 2
-        x: 297
-        y: 79
-        width: 36
-        height: 41
+        x: 2500
+        y: 0
+        width: 500
+        height: 500
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 536e428a5af259530800000000000000
-      internalID: 3861044644077168181
+      spriteID: c14f60ab83cddc54797e52fd52ba92c0
+      internalID: -1489164782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CutOff_6
+      rect:
+        serializedVersion: 2
+        x: 3000
+        y: 0
+        width: 500
+        height: 500
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ade349bffccf8634b9ad00eed7c921c6
+      internalID: -1109436217
       vertices: []
       indices: 
       edges: []
@@ -276,7 +330,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: b57acc6bde98bb14883eb5cc99041104
     internalID: 0
     vertices: []
     indices: 
@@ -286,12 +340,13 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "\u753B\u50CF1_0": 878130953088834983
-      "\u753B\u50CF1_1": -8931210414240568464
-      "\u753B\u50CF1_2": 1171739225260239514
-      "\u753B\u50CF1_3": -6227024058454513058
-      "\u753B\u50CF1_4": 815125052047079762
-      "\u753B\u50CF1_5": 3861044644077168181
+      CutOff_0: 1117768643
+      CutOff_1: -1160594635
+      CutOff_2: 1082168988
+      CutOff_3: -772435250
+      CutOff_4: 1379901352
+      CutOff_5: -1489164782
+      CutOff_6: -1109436217
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
