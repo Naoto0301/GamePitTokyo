@@ -8,7 +8,7 @@ public class JumpPowerUpCard : StatusUpCard
 	/// <summary>
 	/// プレイヤーのジャンプ力をアップさせます.
 	/// </summary>
-	public override void ApplyEffect(Playerkari player)
+	public override void ApplyEffect(O_Player player)
 	{
 		player.IncreaseJumpPower(statUpValue);
 		Debug.Log($"⬆️ ジャンプ力がアップ！ +{statUpValue}");
