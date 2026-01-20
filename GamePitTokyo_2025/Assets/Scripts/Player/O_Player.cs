@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -144,19 +143,4 @@ public class O_Player : MonoBehaviour
         animator.ResetTrigger("CutOff2");
         animator.ResetTrigger("CutOff3");
     }
-
-	internal void IncreaseDefense(float statUpValue)
-	{
-		throw new NotImplementedException();
-	}
-
-	internal void IncreaseAttack(float statUpValue)
-	{
-		throw new NotImplementedException();
-	}
-
-	internal void IncreaseJumpPower(float statUpValue)
-	{
-		throw new NotImplementedException();
-	}
 }

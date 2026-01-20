@@ -50,11 +50,9 @@ public class CardUIPanelDisplay : MonoBehaviour
 			Destroy(gameObject);
 		}
 
-		// 配列を初期化
 		cardImages = new Image[] { card1Image, card2Image, card3Image };
 		cardTexts = new Text[] { card1Text, card2Text, card3Text };
 
-		// 最初は非表示
 		if (panelCanvasGroup != null)
 		{
 			panelCanvasGroup.alpha = 0f;
@@ -63,7 +61,6 @@ public class CardUIPanelDisplay : MonoBehaviour
 
 	private void Update()
 	{
-		// パネルが表示されている時だけ数字キー入力を受け付ける
 		if (panelCanvasGroup != null && panelCanvasGroup.alpha > 0f)
 		{
 			HandleKeyInput();
@@ -97,7 +94,6 @@ public class CardUIPanelDisplay : MonoBehaviour
 	/// <summary>
 	/// カードがクリックされた時の処理.
 	/// </summary>
-	/// <param name="cardIndex">クリックされたカードのインデックス.</param>
 	public void OnCardClicked(int cardIndex)
 	{
 		Debug.Log($"🖱️ カード{cardIndex + 1}がクリックされました");
@@ -120,8 +116,6 @@ public class CardUIPanelDisplay : MonoBehaviour
 	/// <summary>
 	/// カード選択UIを表示します.
 	/// </summary>
-	/// <param name="cards">表示するカード配列.</param>
-	/// <param name="chest">宝箱スクリプト参照.</param>
 	public static void ShowCardSelection(StatusUpCard[] cards, TreasureChest chest)
 	{
 		if (instance == null)
@@ -132,17 +126,14 @@ public class CardUIPanelDisplay : MonoBehaviour
 
 		instance.treasureChest = chest;
 
-		// 各カードの情報をUI に設定
 		for (int i = 0; i < cards.Length && i < 3; i++)
 		{
-			// スプライトを設定
 			if (instance.cardImages[i] != null)
 			{
 				instance.cardImages[i].sprite = cards[i].GetCardSprite();
 				Debug.Log($"カード{i + 1}の画像を設定しました");
 			}
 
-			// 説明文を設定
 			if (instance.cardTexts[i] != null)
 			{
 				instance.cardTexts[i].text = cards[i].GetCardInfo();
@@ -150,7 +141,6 @@ public class CardUIPanelDisplay : MonoBehaviour
 			}
 		}
 
-		// パネルを表示
 		if (instance.panelCanvasGroup != null)
 		{
 			instance.panelCanvasGroup.alpha = 1f;

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 /// <summary>
-/// ジャンプ力UP用カード.
+/// ジャンプ力UP用カード（O_Player対応）.
 /// </summary>
 public class JumpPowerUpCard : StatusUpCard
 {
