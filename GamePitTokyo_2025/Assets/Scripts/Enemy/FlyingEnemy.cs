@@ -226,22 +226,21 @@ public class FlyingEnemy : BaseEnemy
 
 	#region 敵の向き更新.
 
-	/// <summary>
 	/// 移動方向に敵の向きを更新します.
 	/// </summary>
 	/// <param name="direction">移動方向.</param>
 	private void UpdateFacingDirection(Vector2 direction)
 	{
-		// 敵を回転させる（移動方向に応じて）.
+		// 敵を回転させる(移動方向に応じて).
 		if (direction.x > 0.1f)
 		{
 			facingDirection = 1;
-			transform.rotation = Quaternion.identity;
+			transform.rotation = Quaternion.Euler(0, 180, 0);
 		}
 		else if (direction.x < -0.1f)
 		{
 			facingDirection = -1;
-			transform.rotation = Quaternion.Euler(0, 180, 0);
+			transform.rotation = Quaternion.identity;
 		}
 	}
 
