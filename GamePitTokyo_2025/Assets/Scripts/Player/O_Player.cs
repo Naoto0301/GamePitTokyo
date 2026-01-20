@@ -31,7 +31,7 @@ public class O_Player : MonoBehaviour
 
     private float maxHP = 100f;
     private float currentHP;
-
+    private float defencePower = 5f;
     private float p_attackPower;
     #endregion
 
@@ -165,6 +165,7 @@ public class O_Player : MonoBehaviour
     /// <param name="damage">受けるダメージ量.</param>
     public void TakeDamage(float damage)
     {
+        damage = damage - defencePower;
         currentHP -= damage;
         Debug.Log($"プレイヤーがダメージを受けた！ 受けたダメージ: {damage}, 現在HP: {currentHP}/{maxHP}");
 
@@ -217,8 +218,8 @@ public class O_Player : MonoBehaviour
     /// </summary>
     public void IncreaseJumpPower(float amount)
     {
-        p_attackPower += amount;
+        JumpPower += amount;
         Debug.Log($"ジャンプ力アップ！ 現在のジャンプ力ボーナス: {p_attackPower}");
     }
-  
+
 }
