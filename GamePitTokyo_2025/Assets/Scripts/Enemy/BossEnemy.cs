@@ -134,6 +134,7 @@ public class BossEnemy : BaseEnemy
 	private Vector2 attackDirection = Vector2.right;
 	private bool isBossJumping = false;
 	private float bossJumpVelocity = 0f;
+	private float currentAttackDamage = 0f;
 
 	#endregion
 
@@ -515,7 +516,9 @@ public class BossEnemy : BaseEnemy
 
 	private void PerformHipDrop()
 	{
+		currentAttackDamage = GetAttackPower();
 		Debug.Log($"💥 ボスがヒップドロップ攻撃を実行！ 範囲: {hipDropRadius}");
+		Debug.Log($"📊 ヒップドロップダメージ: {currentAttackDamage}");
 
 		// 攻撃フラグをON
 		if (animator != null)
@@ -532,15 +535,15 @@ public class BossEnemy : BaseEnemy
 		{
 			if (collider.CompareTag("Player"))
 			{
-				DamagePlayer(collider, GetAttackPower());
+				DamagePlayer(collider, currentAttackDamage);
 			}
 		}
 	}
 
 	private void PerformChargeAttack()
 	{
-		float chargedDamage = GetAttackPower() * chargeAttackPowerMultiplier;
-		Debug.Log($"💥 ボスがため殴り攻撃を実行！ ダメージ: {chargedDamage}");
+		currentAttackDamage = GetAttackPower() * chargeAttackPowerMultiplier;
+		Debug.Log($"💥 ボスがため殴り攻撃を実行！ ダメージ: {currentAttackDamage}");
 
 		// 攻撃フラグをON
 		if (animator != null)
@@ -549,13 +552,13 @@ public class BossEnemy : BaseEnemy
 		}
 
 		ResetColliderToOriginal();
-		EnableAttackCollider(chargedDamage);
+		EnableAttackCollider(currentAttackDamage);
 	}
 
 	private void PerformChargeKick()
 	{
-		float chargedDamage = GetAttackPower() * chargeKickPowerMultiplier;
-		Debug.Log($"🦵 ボスがため蹴り攻撃を実行！ ダメージ: {chargedDamage}");
+		currentAttackDamage = GetAttackPower() * chargeKickPowerMultiplier;
+		Debug.Log($"🦵 ボスがため蹴り攻撃を実行！ ダメージ: {currentAttackDamage}");
 
 		// 攻撃フラグをON
 		if (animator != null)
@@ -564,16 +567,24 @@ public class BossEnemy : BaseEnemy
 		}
 
 		ResetColliderToOriginal();
-		EnableAttackCollider(chargedDamage);
+		EnableAttackCollider(currentAttackDamage);
 	}
 
 	private void DamagePlayer(Collider2D collider, float damage)
 	{
+		Debug.Log($"💢 DamagePlayer呼び出し: ダメージ = {damage}");
+		Debug.Log($"📍 対象: {collider.gameObject.name}");
+
 		var takeDamageMethod = collider.GetComponent<MonoBehaviour>();
 		if (takeDamageMethod != null)
 		{
+			Debug.Log($"📍 SendMessage実行");
 			takeDamageMethod.SendMessage("TakeDamage", damage, SendMessageOptions.DontRequireReceiver);
 			Debug.Log($"💢 プレイヤーに{damage}ダメージを与えました！");
+		}
+		else
+		{
+			Debug.LogWarning($"⚠️ MonoBehaviourが見つかりません");
 		}
 	}
 
@@ -636,7 +647,7 @@ public class BossEnemy : BaseEnemy
 
 		Debug.Log($"📍 ヒップドロップ用にコライダー調整 - オフセット: ({hipDropColliderOffsetX}, {hipDropColliderOffsetY}), サイズ: ({hipDropColliderSizeX}, {hipDropColliderSizeY})");
 
-		EnableAttackCollider(GetAttackPower());
+		EnableAttackCollider(currentAttackDamage);
 	}
 
 	private void ResetColliderToOriginal()
@@ -653,8 +664,12 @@ public class BossEnemy : BaseEnemy
 	{
 		if (attackCollider != null)
 		{
+			if (damage > 0)
+			{
+				currentAttackDamage = damage;
+			}
 			attackCollider.enabled = true;
-			Debug.Log($"🔓 ボスの攻撃コリジョン有効化");
+			Debug.Log($"🔓 ボスの攻撃コリジョン有効化 - ダメージ: {currentAttackDamage}");
 
 			Invoke(nameof(DisableAttackCollider), 0.5f);
 		}

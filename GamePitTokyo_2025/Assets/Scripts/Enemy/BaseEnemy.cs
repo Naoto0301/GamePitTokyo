@@ -372,7 +372,7 @@ public class BaseEnemy : MonoBehaviour
 	public virtual void TakeDamage(float damage)
 	{
 		currentHP -= damage;
-
+			Debug.Log($"💥 {gameObject.name}がダメージを受けた！ ダメージ量: {damage}, 現在HP: {currentHP}/{maxHP}");
 		if (currentHP <= 0)
 		{
 			Die();
@@ -384,6 +384,7 @@ public class BaseEnemy : MonoBehaviour
 	/// </summary>
 	protected virtual void Die()
 	{
+		Debug.Log($"💀 {gameObject.name}が倒された！");
 		Destroy(gameObject);
 	}
 
