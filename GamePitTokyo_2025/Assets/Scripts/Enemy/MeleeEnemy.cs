@@ -33,6 +33,10 @@ public class MeleeEnemy : BaseEnemy
 	[Tooltip("移動アニメーションパラメータ名.")]
 	private string moveAnimationParameter = "IsMoving";
 
+	[SerializeField]
+	[Tooltip("攻撃力.")]
+	private float attackDamage = 10f;
+
 	[Header("ジャンプ設定")]
 	[SerializeField]
 	[Tooltip("ジャンプ力.")]
@@ -66,6 +70,7 @@ public class MeleeEnemy : BaseEnemy
 	private bool isGrounded = false;
 	private float jumpCooldown = 0f;
 	private Collider2D enemyCollider;
+	private bool hasHitPlayerThisAttack = false;
 
 	#endregion
 
@@ -235,10 +240,6 @@ public class MeleeEnemy : BaseEnemy
 		}
 	}
 
-
-
-
-
 	#endregion
 
 	#region 追尾と攻撃.
@@ -301,6 +302,15 @@ public class MeleeEnemy : BaseEnemy
 			SetMovingAnimation(false);
 			Attack();
 		}
+	}
+
+	/// <summary>
+	/// 攻撃力を取得します.
+	/// </summary>
+	public float GetAttackDamage()
+	{
+		Debug.Log($"📊 GetAttackDamage呼び出し: attackPower = {attackPower}");
+		return attackPower;
 	}
 
 	/// <summary>
@@ -369,6 +379,7 @@ public class MeleeEnemy : BaseEnemy
 		if (attackTimer >= attackCooldown)
 		{
 			attackTimer = 0f;
+			hasHitPlayerThisAttack = false;
 			Debug.Log($"💥 近接敵が攻撃！");
 
 			// 攻撃アニメーション再生.
@@ -401,6 +412,38 @@ public class MeleeEnemy : BaseEnemy
 			isMoving = moving;
 			animator.SetBool(moveAnimationParameter, moving);
 			Debug.Log($"🚶 移動アニメーション: {moving}");
+		}
+	}
+
+	/// <summary>
+	/// 攻撃コリジョンがプレイヤーに接触した時.
+	/// </summary>
+	private void OnTriggerEnter2D(Collider2D collision)
+	{
+		// 攻撃コリジョンからの接触判定のみ処理
+		if (attackCollider != null && collision != attackCollider)
+		{
+			return;
+		}
+
+		// プレイヤーに接触したか確認
+		if (collision.CompareTag("Player"))
+		{
+			// 同じ攻撃で複数回ダメージを与えないようにする
+			if (!hasHitPlayerThisAttack)
+			{
+				O_Player player = collision.GetComponent<O_Player>();
+				if (player != null)
+				{
+					player.TakeDamage(attackDamage);
+					hasHitPlayerThisAttack = true;
+					Debug.Log($"💢 プレイヤーにダメージ！ダメージ量: {attackDamage}");
+				}
+				else
+				{
+					Debug.LogWarning($"⚠️ プレイヤースクリプト(O_Player)が見つかりません");
+				}
+			}
 		}
 	}
 
@@ -494,6 +537,8 @@ public class MeleeEnemy : BaseEnemy
 				{
 					// 初期状態は無効.
 					attackCollider.enabled = false;
+					// IsTriggerを有効化（重要！）
+					attackCollider.isTrigger = true;
 					Debug.Log($"✅ 攻撃コリジョン取得: {attackColliderName}");
 					return;
 				}
@@ -512,9 +557,16 @@ public class MeleeEnemy : BaseEnemy
 		{
 			attackCollider.enabled = true;
 			Debug.Log($"🔓 攻撃コリジョン有効化");
+			Debug.Log($"📊 Is Trigger: {attackCollider.isTrigger}");
+			Debug.Log($"📊 Enabled: {attackCollider.enabled}");
+			Debug.Log($"📊 Bounds: {attackCollider.bounds}");
 
 			// 0.5秒後に無効化.
 			Invoke(nameof(DisableAttackCollider), 0.5f);
+		}
+		else
+		{
+			Debug.LogWarning($"⚠️ attackCollider が null です");
 		}
 	}
 

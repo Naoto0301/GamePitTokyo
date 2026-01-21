@@ -125,24 +125,34 @@ public class Bullet : MonoBehaviour
 	/// プレイヤーに衝突した時の処理.
 	/// </summary>
 	/// <param name="playerCollider">プレイヤーのコライダー.</param>
+	// <summary>
+	/// プレイヤーに衝突した時の処理.
+	/// </summary>
+	/// <param name="playerCollider">プレイヤーのコライダー.</param>
 	private void HitPlayer(Collider2D playerCollider)
 	{
 		hasHit = true;
 
-		// プレイヤーのPlayerHealthスクリプトを取得.
-		Playerkari playerHealth = playerCollider.GetComponent<Playerkari>();
+		Debug.Log($"🎯 弾がプレイヤーに衝突！playerCollider: {playerCollider.gameObject.name}");
 
-		if (playerHealth != null)
+		// プレイヤーのスクリプトを取得
+		// 注意: Playerkari ではなく O_Player を使う
+		O_Player player = playerCollider.GetComponent<O_Player>();
+
+		if (player != null)
 		{
-			playerHealth.TakeDamage(damage);
-			Debug.Log($"プレイヤーが弾に衝突！ダメージ: {damage}");
+			Debug.Log($"✅ O_Player を取得しました");
+			player.TakeDamage(damage);
+			Debug.Log($"💥 プレイヤーが弾に衝突！ダメージ: {damage}");
 		}
 		else
 		{
-			Debug.LogWarning("プレイヤーに PlayerHealth スクリプトが見つかりません.");
+			Debug.LogWarning($"⚠️ プレイヤーに O_Player スクリプトが見つかりません");
+			Debug.Log($"📍 playerCollider.gameObject: {playerCollider.gameObject.name}");
+			Debug.Log($"📍 playerCollider.gameObject.tag: {playerCollider.gameObject.tag}");
 		}
 
-		// 弾を破壊.
+		// 弾を破壊
 		DestroyBullet();
 	}
 
