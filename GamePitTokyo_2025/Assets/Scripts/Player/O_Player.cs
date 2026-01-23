@@ -37,7 +37,8 @@ public class O_Player : MonoBehaviour
 
 	// 攻撃判定コライダー
 	private Collider2D attackCollider;
-	private bool hasHitThisAttack = false;
+    private SpriteRenderer attackspriteRenderer;
+    private bool hasHitThisAttack = false;
 	[SerializeField]
 	private float baseAttackDamage = 10f;
 	#endregion
@@ -113,9 +114,12 @@ public class O_Player : MonoBehaviour
 		if (attackObj != null)
 		{
 			attackCollider = attackObj.GetComponent<Collider2D>();
-			if (attackCollider != null)
+            attackspriteRenderer = attackObj.GetComponent<SpriteRenderer>();
+
+            if (attackCollider != null)
 			{
-				attackCollider.enabled = false; // 初期は無効
+                attackspriteRenderer.enabled = false;
+                attackCollider.enabled = false; // 初期は無効
 				Debug.Log("✅ AttackColliderを取得しました");
 			}
 			else
@@ -219,6 +223,7 @@ public class O_Player : MonoBehaviour
 	{
 		if (attackCollider != null && !attackCollider.enabled)
 		{
+			attackspriteRenderer.enabled = true;
 			attackCollider.enabled = true;
 			hasHitThisAttack = false; // 新しい攻撃なのでリセット
 			Debug.Log($"⚔️ 攻撃判定が有効になりました");
@@ -232,7 +237,8 @@ public class O_Player : MonoBehaviour
 	{
 		if (attackCollider != null && attackCollider.enabled)
 		{
-			attackCollider.enabled = false;
+			attackspriteRenderer.enabled = false;
+            attackCollider.enabled = false;
 			Debug.Log($"🔒 攻撃判定が無効になりました");
 		}
 	}
