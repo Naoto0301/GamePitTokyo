@@ -13,6 +13,7 @@ public class O_Player : MonoBehaviour
 	[SerializeField] float JumpPower = 3f;
 	[SerializeField] LayerMask groundLayer;
 	[SerializeField] Transform groundCheck;
+	[SerializeField] Vector3 startPos;
 	private Rigidbody2D rb;
 	private Vector2 moveInput;
 	bool isRun = false;
@@ -65,6 +66,10 @@ public class O_Player : MonoBehaviour
 				rb.linearVelocity = new Vector2(rb.linearVelocity.x, JumpPower);
 			}
 		};
+		gameinput.Player.Return.performed += ctx =>
+		{
+			ReturnPlayer();
+		};
 		gameinput.Player.CutOff.performed += ctx =>
 		{
 			float now = Time.time;//現在時間取得.
@@ -98,8 +103,10 @@ public class O_Player : MonoBehaviour
 	}
 	private void Start()
 	{
-		//HP初期化.
-		currentHP = maxHP;
+
+        startPos = transform.position;
+        //HP初期化.
+        currentHP = maxHP;
 
 		// 攻撃判定コライダーを取得（子オブジェクト「AttackCollider」から）
 		Transform attackObj = transform.Find("AttackCollider");
@@ -161,6 +168,10 @@ public class O_Player : MonoBehaviour
 		}
 		transform.localScale = lScale;
 		UpdateAnimator();
+	}
+	void ReturnPlayer()
+	{
+		transform.position = startPos;
 	}
 	bool isGrounded()
 	{
