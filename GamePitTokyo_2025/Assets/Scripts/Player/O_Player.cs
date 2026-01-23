@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class O_Player : MonoBehaviour
 {
@@ -269,6 +270,8 @@ public class O_Player : MonoBehaviour
 	{
 		Debug.Log($"💀 プレイヤーが死亡しました");
 		Destroy(gameObject);
+		// シーン遷移
+		SceneManager.LoadScene("GameOver");
 	}
 
 	public float GetCurrentHP()

@@ -270,7 +270,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 161523245019369950, guid: b35baad3d3869904dae197549a03f362, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1554747398656986133, guid: b35baad3d3869904dae197549a03f362, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2112,7 +2112,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5690752699641775933, guid: ae7958aaed37d1a4d8f0dbae60e506e3, type: 3}
       propertyPath: attackPower
-      value: 3
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 5690752699641775933, guid: ae7958aaed37d1a4d8f0dbae60e506e3, type: 3}
       propertyPath: nextSceneName
@@ -2132,7 +2132,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6121997163106993796, guid: ae7958aaed37d1a4d8f0dbae60e506e3, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7932527018564256043, guid: ae7958aaed37d1a4d8f0dbae60e506e3, type: 3}
       propertyPath: m_Size.x
@@ -2177,7 +2177,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5557831514735221439, guid: 5559c6afcbe24a7448bcdb0bb6886383, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6867093199965115307, guid: 5559c6afcbe24a7448bcdb0bb6886383, type: 3}
       propertyPath: attackPower
