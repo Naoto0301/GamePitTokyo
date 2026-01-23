@@ -39,9 +39,27 @@ public class MapManager : MonoBehaviour
 
     [Header("=== Bedrock ===")]
     public int bedrockHeight = 3;
+    [Header("=== Side Walls ===")]
+    public int sideWallWidth = 2;
 
-    [Header("=== Prefab ===")]
+    [Header("=== BlockPrefab ===")]
     public GameObject blockPrefab;
+
+    [Header("=== Enemies ===")]
+    public GameObject[] groundEnemyPrefabs;
+    public int groundEnemyCount = 10;
+
+    public GameObject[] airEnemyPrefabs;
+    public int airEnemyCount = 8;
+
+    public SpawnRange groundEnemyRange;
+    public SpawnRange airEnemyRange;
+
+    [Header("=== Gimmick ===")]
+    public GameObject[] gimmickPrefabs;
+    public int gimmickCount = 4;
+
+    public SpawnRange gimmickRange;
 
     TileType[,] map;
 
@@ -59,8 +77,15 @@ public class MapManager : MonoBehaviour
         FillBelowSurface();
         GenerateCaves();
         ForceBedrock();
+        ForceSideWalls();
         BuildBlocks();
+
+
+        SpawnGroundEnemies();
+        SpawnAirEnemies();
+        GimmickEnemies();
     }
+
 
     // =========================================================
     void GenerateSurface()
@@ -149,6 +174,16 @@ public class MapManager : MonoBehaviour
             }
     }
 
+    void ForceSideWalls()
+    {
+        for (int x = 0; x < sideWallWidth; x++)
+            for (int y = 0; y < height; y++)
+                map[x, y] = TileType.Solid;
+
+        for (int x = width - sideWallWidth; x < width; x++)
+            for (int y = 0; y < height; y++)
+                map[x, y] = TileType.Solid;
+    }
     void CarveRoom(int cx, int cy, int r)
     {
         for (int dx = -r; dx <= r; dx++)
@@ -191,11 +226,12 @@ public class MapManager : MonoBehaviour
                 tile.corner = GetCornerType(x, y);
                 tile.ApplyVisual();
 
+                tile.col.enabled = tile.exposed != ExposedDir.None;
+
                 tile.isHit = tile.exposed.HasFlag(ExposedDir.Up);
             }
     }
 
-    // =========================================================
     ExposedDir GetExposedDir(int x, int y)
     {
         ExposedDir d = ExposedDir.None;
@@ -250,4 +286,105 @@ public class MapManager : MonoBehaviour
                 return y;
         return -1;
     }
+
+    void SpawnGroundEnemies()
+    {
+        System.Random rand = new System.Random();
+        int spawned = 0;
+        int tryLimit = 5000;
+
+        while (spawned < groundEnemyCount && tryLimit-- > 0)
+        {
+            int x = rand.Next(groundEnemyRange.left, groundEnemyRange.right + 1);
+            int y = rand.Next(groundEnemyRange.bottom, groundEnemyRange.top - 3);
+
+            if (!InSpawnRange(x, y, groundEnemyRange)) continue;
+            if (map[x, y] != TileType.Solid) continue;
+
+            if (!IsOpen(x, y + 1)) continue;
+            if (!IsOpen(x, y + 2)) continue;
+            if (!IsOpen(x, y + 3)) continue;
+
+            GameObject prefab =
+                groundEnemyPrefabs[rand.Next(groundEnemyPrefabs.Length)];
+
+            Vector3 pos = new Vector3(
+                mapStart.x + x,
+                mapStart.y + y + 1,
+                0
+            );
+
+            Instantiate(prefab, pos, Quaternion.identity);
+            spawned++;
+        }
+    }
+    void SpawnAirEnemies()
+    {
+        System.Random rand = new System.Random();
+        int spawned = 0;
+        int tryLimit = 5000;
+
+        while (spawned < airEnemyCount && tryLimit-- > 0)
+        {
+            int x = rand.Next(airEnemyRange.left, airEnemyRange.right + 1);
+            int y = rand.Next(airEnemyRange.bottom, airEnemyRange.top + 1);
+
+            if (!InSpawnRange(x, y, airEnemyRange)) continue;
+            if (!IsOpen(x, y)) continue;
+
+            GameObject prefab =
+                airEnemyPrefabs[rand.Next(airEnemyPrefabs.Length)];
+
+            Vector3 pos = new Vector3(
+                mapStart.x + x,
+                mapStart.y + y,
+                0
+            );
+
+            Instantiate(prefab, pos, Quaternion.identity);
+            spawned++;
+        }
+    }
+
+
+    bool InSpawnRange(int x, int y, SpawnRange r)
+    {
+        return
+            x >= r.left &&
+            x <= r.right &&
+            y >= r.bottom &&
+            y <= r.top;
+    }
+
+    void GimmickEnemies()
+    {
+        System.Random rand = new System.Random();
+        int spawned = 0;
+        int tryLimit = 5000;
+
+        while (spawned < gimmickCount && tryLimit-- > 0)
+        {
+            int x = rand.Next(gimmickRange.left, gimmickRange.right + 1);
+            int y = rand.Next(gimmickRange.bottom, gimmickRange.top - 1);
+
+            if (!InSpawnRange(x, y, gimmickRange)) continue;
+            if (map[x, y] != TileType.Solid) continue;
+
+            if (map[x,y + 1] != TileType.Cave) continue;
+
+            GameObject prefab =
+                gimmickPrefabs[rand.Next(gimmickPrefabs.Length)];
+
+            Vector3 pos = new Vector3(
+                mapStart.x + x,
+                mapStart.y + y + 1,
+                0
+            );
+
+            Instantiate(prefab, pos, Quaternion.identity);
+            spawned++;
+        }
+    }
 }
+
+

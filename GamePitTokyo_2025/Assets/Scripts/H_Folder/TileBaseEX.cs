@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class TileBaseEX : MonoBehaviour
 {
+    public BoxCollider2D col;
+
     [Header("=== State ===")]
     public ExposedDir exposed;
     public CornerType corner;
@@ -31,6 +33,7 @@ public class TileBaseEX : MonoBehaviour
     void Awake()
     {
         sr = GetComponent<SpriteRenderer>();
+        col = transform.GetComponent<BoxCollider2D>();
     }
 
     // =====================================
