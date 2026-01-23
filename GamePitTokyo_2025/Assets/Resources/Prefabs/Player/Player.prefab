@@ -239,7 +239,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 3
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -250,7 +250,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &3035787065109486888
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -265,12 +265,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Player: {fileID: 7081633759992450457}
   speed: 5
-  JumpPower: 3
+  JumpPower: 10
   groundLayer:
     serializedVersion: 2
     m_Bits: 256
   groundCheck: {fileID: 501587468236612919}
+  startPos: {x: 0, y: 0, z: 0}
   maxHP: 100
+  baseAttackDamage: 10
 --- !u!61 &3443566233439521334
 BoxCollider2D:
   m_ObjectHideFlags: 0
