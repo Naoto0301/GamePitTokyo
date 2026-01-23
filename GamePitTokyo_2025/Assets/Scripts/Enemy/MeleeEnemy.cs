@@ -105,19 +105,14 @@ public class MeleeEnemy : BaseEnemy
 			enemyCollider = GetComponentInChildren<Collider2D>();
 		}
 
-		Debug.Log($"✅ Collider2D取得: {enemyCollider?.name ?? "null"}");
-
 		// **Y軸のロックを解除（ジャンプ対応）**
 		if (rb != null)
 		{
 			rb.constraints = RigidbodyConstraints2D.FreezeRotation;
-			Debug.Log($"✅ Y軸ロック解除: ジャンプ可能に設定");
 		}
 
 		// 攻撃コリジョンを取得.
 		FindAttackCollider();
-
-		Debug.Log($"✅ MeleeEnemy初期化完了, PlayerTransform: {playerTransform}");
 	}
 
 	/// <summary>
@@ -141,10 +136,6 @@ public class MeleeEnemy : BaseEnemy
 		{
 			OnPlayerDetected();
 		}
-		else
-		{
-			Debug.LogWarning("⚠️ playerTransform が null のままです");
-		}
 	}
 
 	/// <summary>
@@ -161,14 +152,10 @@ public class MeleeEnemy : BaseEnemy
 
 		if (directionToPlayer.x == 0)
 		{
-			Debug.Log($"⚠️ 水平方向の移動がありません");
 			return;
 		}
 
 		Vector2 rayDirection = new Vector2(directionToPlayer.x > 0 ? 1 : -1, 0);
-
-		Debug.Log($"🔍 障害物チェック開始: 敵位置={transform.position}, rayDirection={rayDirection}");
-		Debug.Log($"敵のコライダー: {enemyCollider?.name ?? "null"}");
 
 		// 敵の前方と周囲からレイキャスト（複数箇所）.
 		Vector2[] rayOrigins = new Vector2[]
@@ -183,7 +170,6 @@ public class MeleeEnemy : BaseEnemy
 		for (int i = 0; i < rayOrigins.Length; i++)
 		{
 			Vector2 origin = rayOrigins[i];
-			Debug.Log($"🔍 Ray {i} 実行: origin={origin}");
 
 			// 全てのコライダーを取得
 			RaycastHit2D[] hits = Physics2D.RaycastAll(
@@ -194,19 +180,15 @@ public class MeleeEnemy : BaseEnemy
 
 			Debug.DrawRay(origin, rayDirection * 2f, Color.yellow);
 
-			Debug.Log($"🔫 Raycast from {origin}: Hits={hits.Length}");
-
 			if (hits.Length > 0)
 			{
 				// 敵自身以外の最初のコライダーを探す
 				foreach (RaycastHit2D hit in hits)
 				{
 					bool isSelf = hit.collider == enemyCollider || hit.collider.gameObject == gameObject;
-					Debug.Log($"  → Hit: {hit.collider?.name}, Distance={hit.distance}, 敵と同じ？{isSelf}");
 
 					if (hit.collider != null && !isSelf)
 					{
-						Debug.Log($"🚧 障害物検出: {hit.collider.name}");
 						obstacleFound = true;
 						break;
 					}
@@ -219,24 +201,9 @@ public class MeleeEnemy : BaseEnemy
 			}
 		}
 
-		Debug.Log($"📊 ジャンプ判定: obstacleFound={obstacleFound}, isGrounded={isGrounded}, jumpCooldown={jumpCooldown}");
-
-		if (obstacleFound)
+		if (isGrounded && jumpCooldown <= 0 && obstacleFound)
 		{
-			if (!isGrounded)
-			{
-				Debug.Log($"❌ 地面に触れていません");
-			}
-			if (jumpCooldown > 0)
-			{
-				Debug.Log($"❌ ジャンプクールダウン中: {jumpCooldown}");
-			}
-
-			if (isGrounded && jumpCooldown <= 0)
-			{
-				TryJump();
-				Debug.Log($"🆙 ジャンプ実行！");
-			}
+			TryJump();
 		}
 	}
 
@@ -253,15 +220,11 @@ public class MeleeEnemy : BaseEnemy
 	{
 		if (playerTransform == null)
 		{
-			Debug.LogWarning("⚠️ playerTransformがnullです");
 			return;
 		}
 
 		float distanceToPlayer = Vector2.Distance(transform.position, playerTransform.position);
 		Vector2 directionToPlayer = GetDirectionToPlayer();
-
-		Debug.Log($"📍 プレイヤー距離: {distanceToPlayer}, 方向: {directionToPlayer}");
-		Debug.Log($"🟢 isGrounded: {isGrounded}, jumpCooldown: {jumpCooldown}");
 
 		// 敵の向きをプレイヤー方向に更新.
 		UpdateFacingDirection(directionToPlayer);
@@ -269,8 +232,6 @@ public class MeleeEnemy : BaseEnemy
 		// 攻撃範囲外なら追尾.
 		if (distanceToPlayer > attackRange)
 		{
-			Debug.Log($"🚶 プレイヤーに追尾中...");
-
 			var rb = GetComponent<Rigidbody2D>();
 
 			// 地面にいる場合のみ水平移動を更新（空中では現在の水平速度を保持）
@@ -296,7 +257,6 @@ public class MeleeEnemy : BaseEnemy
 		// 攻撃範囲内なら攻撃.
 		else
 		{
-			Debug.Log($"⚔️ 攻撃範囲内！攻撃開始！");
 			lastMoveDirection = Vector2.zero;
 			Move(Vector2.zero);
 			SetMovingAnimation(false);
@@ -309,7 +269,6 @@ public class MeleeEnemy : BaseEnemy
 	/// </summary>
 	public float GetAttackDamage()
 	{
-		Debug.Log($"📊 GetAttackDamage呼び出し: attackPower = {attackPower}");
 		return attackPower;
 	}
 
@@ -318,13 +277,21 @@ public class MeleeEnemy : BaseEnemy
 	/// </summary>
 	private void OnCollisionEnter2D(Collision2D collision)
 	{
+		// デバッグ：衝突相手の情報を確認
+		Debug.Log($"衝突相手: {collision.gameObject.name}, レイヤー: {collision.gameObject.layer}, Enemyレイヤー: {LayerMask.NameToLayer("Enemy")}");
+
 		// 敵自身のコライダーを無視.
 		if (collision.gameObject == gameObject)
 		{
 			return;
 		}
 
-		Debug.Log($"💥 衝突検出: {collision.gameObject.name}");
+		// **Enemyレイヤーとの衝突を無視**
+		int enemyLayer = LayerMask.NameToLayer("Enemy");
+		if (collision.gameObject.layer == enemyLayer)
+		{
+			return;
+		}
 
 		// 衝突した瞬間、地面に接触している状態として扱う
 		isGrounded = true;
@@ -339,7 +306,6 @@ public class MeleeEnemy : BaseEnemy
 				// ジャンプクールダウンをリセット
 				jumpCooldown = 0f;
 				TryJump();
-				Debug.Log($"🆙 衝突時ジャンプ実行!");
 			}
 		}
 	}
@@ -353,19 +319,9 @@ public class MeleeEnemy : BaseEnemy
 
 		if (rb != null)
 		{
-			Debug.Log($"📊 ジャンプ前: pos={transform.position}, velocity={rb.linearVelocity}");
-
 			// 直接y速度を設定（AddForceではなく）
 			rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-
-			Debug.Log($"📊 ジャンプ後: pos={transform.position}, velocity={rb.linearVelocity}");
-
 			jumpCooldown = 0.5f;
-			Debug.Log($"🆙 敵がジャンプ！ジャンプ力設定: {jumpForce}");
-		}
-		else
-		{
-			Debug.LogWarning("⚠️ Rigidbody2D が見つかりません");
 		}
 	}
 
@@ -380,7 +336,6 @@ public class MeleeEnemy : BaseEnemy
 		{
 			attackTimer = 0f;
 			hasHitPlayerThisAttack = false;
-			Debug.Log($"💥 近接敵が攻撃！");
 
 			// 攻撃アニメーション再生.
 			PlayAttackAnimation();
@@ -398,7 +353,6 @@ public class MeleeEnemy : BaseEnemy
 		if (animator != null)
 		{
 			animator.SetTrigger(attackAnimationTrigger);
-			Debug.Log($"🎬 攻撃アニメーション再生");
 		}
 	}
 
@@ -411,7 +365,6 @@ public class MeleeEnemy : BaseEnemy
 		{
 			isMoving = moving;
 			animator.SetBool(moveAnimationParameter, moving);
-			Debug.Log($"🚶 移動アニメーション: {moving}");
 		}
 	}
 
@@ -437,11 +390,6 @@ public class MeleeEnemy : BaseEnemy
 				{
 					player.TakeDamage(attackDamage);
 					hasHitPlayerThisAttack = true;
-					Debug.Log($"💢 プレイヤーにダメージ！ダメージ量: {attackDamage}");
-				}
-				else
-				{
-					Debug.LogWarning($"⚠️ プレイヤースクリプト(O_Player)が見つかりません");
 				}
 			}
 		}
@@ -452,13 +400,12 @@ public class MeleeEnemy : BaseEnemy
 	#region 地面判定.
 
 	/// <summary>
-	/// 敵が地面に接触しているかを判定します（デバッグ強化版）.
+	/// 敵が地面に接触しているかを判定します.
 	/// </summary>
 	private void CheckGrounded()
 	{
 		if (enemyCollider == null)
 		{
-			Debug.LogWarning("⚠️ enemyColliderがnullです");
 			isGrounded = false;
 			return;
 		}
@@ -477,14 +424,10 @@ public class MeleeEnemy : BaseEnemy
 			new Vector2(rightX, bottomY)
 		};
 
-		bool wasGrounded = isGrounded;
 		isGrounded = false;
 
 		// LayerMask が設定されていない場合は全レイヤーをチェック
 		int layerMaskToUse = (groundLayer.value == 0) ? ~0 : groundLayer;
-
-		Debug.Log($"🔍 CheckGrounded: 敵位置={transform.position}, bottomY={bottomY}");
-		Debug.Log($"📍 レイキャスト開始位置: left={leftX}, center={centerX}, right={rightX}");
 
 		foreach (Vector2 origin in raycastOrigins)
 		{
@@ -496,25 +439,13 @@ public class MeleeEnemy : BaseEnemy
 			);
 
 			Debug.DrawRay(origin, Vector2.down * 0.5f, hit.collider != null ? Color.green : Color.red);
-			Debug.Log($"🔫 Raycast from {origin}: Hit={hit.collider != null}, Distance={hit.distance}, Collider={hit.collider?.name}");
 
 			// 敵自身のコライダーを無視して地面を検出
 			if (hit.collider != null && hit.collider != enemyCollider)
 			{
 				isGrounded = true;
-				Debug.Log($"✅ 地面検出: {hit.collider.name}, Distance={hit.distance}");
 				break;
 			}
-		}
-
-		if (!isGrounded)
-		{
-			Debug.Log($"❌ 地面が見つかりません");
-		}
-
-		if (wasGrounded && !isGrounded)
-		{
-			Debug.Log($"⚠️ 地面から離れた");
 		}
 	}
 
@@ -539,13 +470,10 @@ public class MeleeEnemy : BaseEnemy
 					attackCollider.enabled = false;
 					// IsTriggerを有効化（重要！）
 					attackCollider.isTrigger = true;
-					Debug.Log($"✅ 攻撃コリジョン取得: {attackColliderName}");
 					return;
 				}
 			}
 		}
-
-		Debug.LogWarning($"⚠️ 攻撃コリジョンが見つかりません: {attackColliderName}");
 	}
 
 	/// <summary>
@@ -556,17 +484,9 @@ public class MeleeEnemy : BaseEnemy
 		if (attackCollider != null)
 		{
 			attackCollider.enabled = true;
-			Debug.Log($"🔓 攻撃コリジョン有効化");
-			Debug.Log($"📊 Is Trigger: {attackCollider.isTrigger}");
-			Debug.Log($"📊 Enabled: {attackCollider.enabled}");
-			Debug.Log($"📊 Bounds: {attackCollider.bounds}");
 
 			// 0.5秒後に無効化.
 			Invoke(nameof(DisableAttackCollider), 0.5f);
-		}
-		else
-		{
-			Debug.LogWarning($"⚠️ attackCollider が null です");
 		}
 	}
 
@@ -578,7 +498,6 @@ public class MeleeEnemy : BaseEnemy
 		if (attackCollider != null)
 		{
 			attackCollider.enabled = false;
-			Debug.Log($"🔒 攻撃コリジョン無効化");
 		}
 	}
 
