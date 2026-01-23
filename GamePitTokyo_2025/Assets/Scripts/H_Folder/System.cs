@@ -25,3 +25,12 @@ public enum CornerType
     InnerDownLeft,
     InnerDownRight,
 }
+
+[System.Serializable]
+public struct SpawnRange
+{
+    public int left;
+    public int right;
+    public int top;
+    public int bottom;
+}
