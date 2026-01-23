@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// ボスエネミークラス.
@@ -100,6 +101,11 @@ public class BossEnemy : BaseEnemy
 	[SerializeField]
 	[Tooltip("攻撃フラグパラメータ名.")]
 	private string attackParameter = "Attack";
+
+	[Header("シーン遷移設定")]
+	[SerializeField]
+	[Tooltip("ボス撃破後に遷移するシーン名")]
+	private string nextSceneName = "ResultScene";
 
 	#endregion
 
@@ -702,6 +708,23 @@ public class BossEnemy : BaseEnemy
 		{
 			Die();
 		}
+	}
+
+	protected override void Die()
+	{
+		Debug.Log("☠️ ボスが撃破されました！シーン遷移します。");
+
+		// 必要なら演出停止
+		if (rb != null)
+		{
+			rb.linearVelocity = Vector2.zero;
+		}
+
+		// ボスを一旦無効化（演出用）
+		gameObject.SetActive(false);
+
+		// シーン遷移
+		SceneManager.LoadScene(nextSceneName);
 	}
 
 	#endregion
