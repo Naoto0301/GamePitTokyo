@@ -265,7 +265,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Player: {fileID: 7081633759992450457}
   speed: 5
-  JumpPower: 10
+  JumpPower: 15
   groundLayer:
     serializedVersion: 2
     m_Bits: 256
