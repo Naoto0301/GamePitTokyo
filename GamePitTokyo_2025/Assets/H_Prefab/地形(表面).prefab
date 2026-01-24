@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4186091825554459638}
   m_Layer: 8
   m_Name: "\u5730\u5F62(\u8868\u9762)"
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -147,6 +147,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6133af26c840d98448329ecb818b1a90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  col: {fileID: 0}
   exposed: 0
   corner: 0
   isHit: 0

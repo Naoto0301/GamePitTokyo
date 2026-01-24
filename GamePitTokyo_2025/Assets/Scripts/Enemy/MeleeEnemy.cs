@@ -81,7 +81,24 @@ public class MeleeEnemy : BaseEnemy
 	/// </summary>
 	protected override void Start()
 	{
-		base.Start();
+		// **Y軸のロックを解除（ジャンプ対応）- base.Start()の前に実行**
+		rb = GetComponent<Rigidbody2D>();
+		if (rb != null)
+		{
+			rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+			rb.gravityScale = 1f;
+			rb.linearDamping = 0f;
+		}
+
+		base.Start();  // **この後BaseEnemyがY軸をロックしようとするが、MeleeEnemyで再度解除される**
+
+		// **base.Start()後にもう一度Y軸ロックを解除**
+		if (rb != null)
+		{
+			rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+			rb.linearVelocity = Vector2.zero;
+		}
+
 		attackTimer = attackCooldown;
 
 		// Animatorが指定されていない場合は自動取得.
@@ -105,14 +122,11 @@ public class MeleeEnemy : BaseEnemy
 			enemyCollider = GetComponentInChildren<Collider2D>();
 		}
 
-		// **Y軸のロックを解除（ジャンプ対応）**
-		if (rb != null)
-		{
-			rb.constraints = RigidbodyConstraints2D.FreezeRotation;
-		}
-
 		// 攻撃コリジョンを取得.
 		FindAttackCollider();
+
+		// **スポーン直後に地面判定を更新**
+		CheckGrounded();
 	}
 
 	/// <summary>
@@ -212,6 +226,18 @@ public class MeleeEnemy : BaseEnemy
 	#region 追尾と攻撃.
 
 	private Vector2 lastMoveDirection = Vector2.zero;
+
+	/// <summary>
+	/// 敵を移動させます（Y軸速度を保持）.
+	/// </summary>
+	protected override void Move(Vector2 direction)
+	{
+		if (rb != null)
+		{
+			// X軸のみを設定、Y軸は重力に任せる
+			rb.linearVelocity = new Vector2(direction.x, rb.linearVelocity.y);
+		}
+	}
 
 	/// <summary>
 	/// プレイヤーが検出された時、追尾して攻撃します.
@@ -410,6 +436,9 @@ public class MeleeEnemy : BaseEnemy
 			return;
 		}
 
+		// **レイキャスト距離を拡大（スポーン直後の判定用）**
+		float raycastDistance = 1f;
+
 		// コライダーの下端を基準にレイキャスト.
 		float bottomY = enemyCollider.bounds.min.y;
 		float leftX = enemyCollider.bounds.min.x + 0.05f;
@@ -434,14 +463,20 @@ public class MeleeEnemy : BaseEnemy
 			RaycastHit2D hit = Physics2D.Raycast(
 				origin,
 				Vector2.down,
-				0.5f,
+				raycastDistance,
 				layerMaskToUse
 			);
 
-			Debug.DrawRay(origin, Vector2.down * 0.5f, hit.collider != null ? Color.green : Color.red);
+			Debug.DrawRay(origin, Vector2.down * raycastDistance, hit.collider != null ? Color.green : Color.red);
+
+			// デバッグ情報
+			if (hit.collider != null)
+			{
+				Debug.Log($"地面検出: {hit.collider.gameObject.name}, isGrounded: {!hit.collider.CompareTag("Enemy")}, タグ: {hit.collider.tag}");
+			}
 
 			// 敵自身のコライダーを無視して地面を検出
-			if (hit.collider != null && hit.collider != enemyCollider)
+			if (hit.collider != null && hit.collider != enemyCollider && !hit.collider.CompareTag("Enemy"))
 			{
 				isGrounded = true;
 				break;
