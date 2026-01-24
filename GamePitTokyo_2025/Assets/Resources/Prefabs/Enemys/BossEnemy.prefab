@@ -159,15 +159,15 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -7321634705781921558, guid: 696fae25528e4434f82e5e66d4642dbe, type: 3}
+  m_Sprite: {fileID: -4957783580466432559, guid: 8443749aca90bac45a11422b9b9a8c59, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1.7894737, y: 2}
+  m_Size: {x: 2.137931, y: 2.7586207}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!114 &5690752699641775933
@@ -191,10 +191,10 @@ MonoBehaviour:
   raycastCount: 5
   obstacleLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   playerLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 512
   moveSpeed: 2
   chaseSpeed: 4
   wanderWaitTime: 2
@@ -222,6 +222,7 @@ MonoBehaviour:
   animator: {fileID: 0}
   moveParameter: Move
   attackParameter: Attack
+  nextSceneName: ResultScene
 --- !u!50 &3391230338932400534
 Rigidbody2D:
   serializedVersion: 5

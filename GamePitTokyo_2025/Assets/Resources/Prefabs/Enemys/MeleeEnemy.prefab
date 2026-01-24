@@ -113,7 +113,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: -6.5461082, y: -3.0706232, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: -1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1024930561991046970}
@@ -198,7 +198,7 @@ MonoBehaviour:
     m_Bits: 64
   playerLayer:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 640
   moveSpeed: 4
   chaseSpeed: 4
   wanderWaitTime: 2
@@ -210,7 +210,8 @@ MonoBehaviour:
   animator: {fileID: 0}
   attackAnimationTrigger: Attack
   moveAnimationParameter: IsMoving
-  jumpForce: 70
+  attackDamage: 10
+  jumpForce: 5
   groundCheckDistance: 0.1
   groundLayer:
     serializedVersion: 2

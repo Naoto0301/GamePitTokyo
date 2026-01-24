@@ -116,7 +116,7 @@ MonoBehaviour:
     m_Bits: 64
   playerLayer:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 512
   moveSpeed: 2
   chaseSpeed: 4
   wanderWaitTime: 2
